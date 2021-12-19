@@ -58,6 +58,12 @@ static void init()
   for(int i = 0; i < nb_text; ++i)
     draw_text(text_to_draw + i);
 
+  temps++;
+  text_to_draw[1] = text_to_draw[0];
+  text_to_draw[1].value = std::to_string(temps);
+  text_to_draw[1].bottomLeft = vec2(-1, 0.90);
+  text_to_draw[1].topRight = vec2(-0.90, 1);
+
   glutSwapBuffers();
 }
 
@@ -76,6 +82,12 @@ static void keyboard_callback(unsigned char key, int, int)
     case 27:
       exit(0);
       break;
+    case 'z':
+        obj[0].tr.translation.z += 1;
+        break;
+    case 's':
+        obj[0].tr.translation.z -= 1;
+        break;
   }
 }
 
@@ -92,12 +104,7 @@ static void special_callback(int key, int, int)
 \*****************************************************************************/
 static void timer_callback(int)
 {
-  temps++;
-  text_to_draw[1] = text_to_draw[0];
-  text_to_draw[1].value = std::to_string(temps);
-  text_to_draw[1].bottomLeft = vec2(-1, 0.90);
-  text_to_draw[1].topRight = vec2(-0.90, 1);
-  glutTimerFunc(1000, timer_callback, 0);
+  glutTimerFunc(25, timer_callback, 0);
   glutPostRedisplay();
 }
 
