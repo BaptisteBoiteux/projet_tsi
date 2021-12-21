@@ -10,14 +10,23 @@
 //identifiant des shaders
 GLuint shader_program_id;
 GLuint gui_program_id;
-int temps = 0;
-camera cam;
 
-const int nb_obj = 3;
-objet3d obj[nb_obj];
+camera cam;
+int temps = 0;
+int nbr;
+
+const int nb_obj = 9;
+objet3d obj[nb_obj][nb_obj];
+
+const int nb_obj2 = 4;
+objet3d obj2[nb_obj2];
 
 const int nb_text = 2;
 text text_to_draw[nb_text];
+
+float angle_z_model_1 = 0.0f;
+float angle_z_model_5 = 0.0f;
+
 
 /*****************************************************************************\
 * initialisation                                                              *
@@ -27,18 +36,23 @@ static void init()
   shader_program_id = glhelper::create_program_from_file("shaders/shader.vert", "shaders/shader.frag"); CHECK_GL_ERROR();
 
   cam.projection = matrice_projection(60.0f*M_PI/180.0f,1.0f,0.01f,100.0f);
-  cam.tr.translation = vec3(0.0f, 1.0f, 0.0f);
-  // cam.tr.translation = vec3(0.0f, 20.0f, 0.0f);
-  // cam.tr.rotation_center = vec3(0.0f, 20.0f, 0.0f);
-  // cam.tr.rotation_euler = vec3(M_PI/2., 0.0f, 0.0f);
+  cam.tr.translation = vec3(2.0f, 0.0f,1.0f);
+   
+  //cam.tr.translation = vec3(0.0f, 1.0f, 0.0f);
 
-  init_model_1();
+  //cam.tr.rotation_center = vec3(3.0f, 6.0f, 0.0f);
+
+   //cam.tr.rotation_euler = vec3(0.0f, M_PI/2., 0.0f);
+
   init_model_2();
   init_model_3();
+  init_model_4();
+  init_model_5();
+
 
   gui_program_id = glhelper::create_program_from_file("shaders/gui.vert", "shaders/gui.frag"); CHECK_GL_ERROR();
 
-  text_to_draw[0].value = "Le Best Binome";
+ text_to_draw[0].value = "Le Best Binome";
   text_to_draw[0].bottomLeft = vec2(-0.2, 0.5);
   text_to_draw[0].topRight = vec2(0.2, 1);
   init_text(text_to_draw);
@@ -52,11 +66,25 @@ static void init()
   glClearColor(0.5f, 0.6f, 0.9f, 1.0f); CHECK_GL_ERROR();
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); CHECK_GL_ERROR();
 
-  for(int i = 0; i < nb_obj; ++i)
-    draw_obj3d(obj + i, cam);
 
-  for(int i = 0; i < nb_text; ++i)
-    draw_text(text_to_draw + i);
+  for(int i = 0; i < nb_obj2; ++i)
+    draw_obj3d(obj2 + i, cam);
+
+  for(int i = 0; i < nb_obj; ++i){
+   for(int j = 0; j < nb_obj; ++j){
+      draw_obj3d(&obj[i][j] , cam);
+
+  }
+  }
+
+  for(int i = 0; i < nb_text; ++i){
+    draw_text(text_to_draw + i);}
+
+  if (nbr==1){
+  cam.tr.translation = obj2[1].tr.translation   +vec3(0.0f, 2.0f, 3.0f);
+  nbr=1;
+  }
+
 
   temps++;
   text_to_draw[1] = text_to_draw[0];
@@ -79,23 +107,56 @@ static void keyboard_callback(unsigned char key, int, int)
       break;
     case 'q':
     case 'Q':
+
     case 27:
       exit(0);
       break;
-    case 'z':
-        obj[0].tr.translation.z += 1;
-        break;
-    case 's':
-        obj[0].tr.translation.z -= 1;
-        break;
+    case 'l':
+      angle_z_model_1 -= M_PI/6;
+    break;
+    case 'o':
+      angle_z_model_5 += M_PI/6;
+    break;
   }
+  obj2[2].tr.rotation_euler =vec3 (0.0f,0.0f,angle_z_model_1);
+  obj2[3].tr.rotation_euler =vec3 (0.0f,0.0f,angle_z_model_5);
 }
 
-/*****************************************************************************\
+/***************************************************************************\
 * special_callback                                                            *
 \*****************************************************************************/
 static void special_callback(int key, int, int)
 {
+  float dL=0.03f;
+  switch (key)
+  {
+    case GLUT_KEY_UP:
+      obj2[1].tr.translation.y += dL; //rotation avec la touche du haut
+      obj2[2].tr.translation.y += dL;
+      obj2[3].tr.translation.y += dL;
+
+      break;
+    case GLUT_KEY_DOWN:
+      obj2[1].tr.translation.y -= dL; //rotation avec la touche du bas
+      obj2[2].tr.translation.y -= dL;
+      obj2[3].tr.translation.y -= dL;
+
+      break;
+    case GLUT_KEY_LEFT:
+      obj2[1].tr.translation.x -= dL; //rotation avec la touche de gauche
+      obj2[2].tr.translation.x -= dL;
+      obj2[3].tr.translation.x -= dL;
+
+      break;
+    case GLUT_KEY_RIGHT:
+      obj2[1].tr.translation.x += dL; //rotation avec la touche de droite
+      obj2[2].tr.translation.x += dL;
+      obj2[3].tr.translation.x += dL;
+
+      break;
+  }
+    //déplacememnt de la cam en même temps que le mouvementud monstre
+  cam.tr.translation = obj2[1].tr.translation   +vec3(0.0f, 1.0f, 3.0f);
 }
 
 
@@ -104,6 +165,12 @@ static void special_callback(int key, int, int)
 \*****************************************************************************/
 static void timer_callback(int)
 {
+
+
+    for(int i = 0; i < nb_obj; ++i){
+   for(int j = 0; j < nb_obj; ++j){
+         obj[i][j].tr.translation.z+=0.02;}}
+
   glutTimerFunc(25, timer_callback, 0);
   glutPostRedisplay();
 }
@@ -282,13 +349,55 @@ GLuint upload_mesh_to_gpu(const mesh& m)
   return vao;
 }
 
-void init_model_1()
+
+
+
+
+
+
+
+void init_model_2()
 {
+    mesh m = load_obj_file("data/cube.obj");
+
+  // Affecte une transformation sur les sommets du maillage
+
+  float s = 0.2f;
+  float s2 = 0.6f;
+  mat4 transform = mat4(   s, 0.0f, 0.0f, 0.0f,
+      0.0f,    s2, 0.0f, 0.0f,
+      0.0f, 0.0f,   s , 0.0f,
+      0.0f, 0.0f, 0.0f, 1.0f);
+  apply_deformation(&m,transform);
+
+   update_normals(&m);
+  fill_color(&m,vec3(1.0f,1.0f,1.0f));
+
+  // Centre la rotation du modele 1 autour de son centre de gravite approximatif
+  obj2[1].tr.rotation_center = vec3(-0.2f,-0.4f,0.0f);
+
+   
+  //fill_color(&m,vec3(0.5f,0.0f,1.0f));
+
+  obj2[1].vao = upload_mesh_to_gpu(m);
+
+  obj2[1].nb_triangle = m.connectivity.size();
+  obj2[1].texture_id = glhelper::load_texture("data/grass.tga");CHECK_GL_ERROR();
+  obj2[1].visible = true;
+  obj2[1].prog = shader_program_id;
+
+  obj2[1].tr.translation = vec3(2.2f , 0.0f, -5.0);
+}
+
+
+void init_model_3(){
+for (int k = 0; k<9; k++){
+  for(int j = 0; j<9; j++){
   // Chargement d'un maillage a partir d'un fichier
   mesh m = load_obj_file("data/cube.obj");
 
   // Affecte une transformation sur les sommets du maillage
-  float s = 0.2f;
+float s = 0.2f;
   mat4 transform = mat4(   s, 0.0f, 0.0f, 0.0f,
       0.0f,    s, 0.0f, 0.0f,
       0.0f, 0.0f,   s , 0.0f,
@@ -296,51 +405,83 @@ void init_model_1()
   apply_deformation(&m,transform);
 
   // Centre la rotation du modele 1 autour de son centre de gravite approximatif
-  obj[0].tr.rotation_center = vec3(0.0f,0.0f,0.0f);
+  obj[k][j].tr.rotation_center = vec3(0.0f,0.0f,0.0f);
 
   update_normals(&m);
-  fill_color(&m,vec3(1.0f,1.0f,1.0f));
+fill_color(&m,vec3(1.0f,1.0f,1.0f));
 
-  obj[0].vao = upload_mesh_to_gpu(m);
+  obj[k][j].vao = upload_mesh_to_gpu(m);
 
-  obj[0].nb_triangle = m.connectivity.size();
-  obj[0].texture_id = glhelper::load_texture("data/bleu.jpg");
-  obj[0].visible = true;
-  obj[0].prog = shader_program_id;
+  obj[k][j].nb_triangle = m.connectivity.size();
+  obj[k][j].texture_id = glhelper::load_texture("data/grass.tga");CHECK_GL_ERROR();
+  obj[k][j].visible = true;
+  obj[k][j].prog = shader_program_id;
 
-  obj[0].tr.translation = vec3(-2.0, 0.0, -10.0);
+  obj[k][j].tr.translation = vec3(0.0 +0.55*j, 0.0+0.55*k, -10.0);
+}
+}
 }
 
-void init_model_2()
+void init_model_4()
 {
-}
-
-
-void init_model_3()
-{
-  // Chargement d'un maillage a partir d'un fichier
-  mesh m = load_off_file("data/armadillo_light.off");
+    mesh m = load_obj_file("data/cube.obj");
 
   // Affecte une transformation sur les sommets du maillage
-  float s = 0.01f;
+
+  float s = 0.2f;
+  float s2 = 0.4f;
   mat4 transform = mat4(   s, 0.0f, 0.0f, 0.0f,
-      0.0f,    s, 0.0f, 0.50f,
+      0.0f,    s2, 0.0f, 0.0f,
       0.0f, 0.0f,   s , 0.0f,
       0.0f, 0.0f, 0.0f, 1.0f);
-  apply_deformation(&m,matrice_rotation(M_PI/2.0f,1.0f,0.0f,0.0f));
-  apply_deformation(&m,matrice_rotation(M_PI,0.0f,1.0f,0.0f));
   apply_deformation(&m,transform);
 
-  update_normals(&m);
+   update_normals(&m);
   fill_color(&m,vec3(1.0f,1.0f,1.0f));
 
-  obj[2].vao = upload_mesh_to_gpu(m);
+  // Centre la rotation du modele 1 autour de son centre de gravite approximatif
+  obj2[2].tr.rotation_center = vec3(-0.2f,-0.4f,0.0f);
 
-  obj[2].nb_triangle = m.connectivity.size();
-  obj[2].texture_id = glhelper::load_texture("data/white.tga");
+  //fill_color(&m,vec3(0.5f,0.0f,1.0f));
 
-  obj[2].visible = true;
-  obj[2].prog = shader_program_id;
+  obj2[2].vao = upload_mesh_to_gpu(m);
 
-  obj[2].tr.translation = vec3(2.0, 0.0, -10.0);
+  obj2[2].nb_triangle = m.connectivity.size();
+  obj2[2].texture_id = glhelper::load_texture("data/container.tga");CHECK_GL_ERROR();
+  obj2[2].visible = true;
+  obj2[2].prog = shader_program_id;
+
+  obj2[2].tr.translation = vec3(2.6f , 0.8f, -5.0);
+}
+
+void init_model_5()
+{
+    mesh m = load_obj_file("data/cube.obj");
+
+  // Affecte une transformation sur les sommets du maillage
+
+  float s = 0.2f;
+  float s2 = 0.4f;
+  mat4 transform = mat4(   s, 0.0f, 0.0f, 0.0f,
+      0.0f,    s2, 0.0f, 0.0f,
+      0.0f, 0.0f,   s , 0.0f,
+      0.0f, 0.0f, 0.0f, 1.0f);
+  apply_deformation(&m,transform);
+
+   update_normals(&m);
+  fill_color(&m,vec3(1.0f,1.0f,1.0f));
+
+  // Centre la rotation du modele 1 autour de son centre de gravite approximatif
+  obj2[3].tr.rotation_center = vec3(0.2f,-0.4f,0.0f);
+
+  //fill_color(&m,vec3(0.5f,0.0f,1.0f));
+
+  obj2[3].vao = upload_mesh_to_gpu(m);
+
+  obj2[3].nb_triangle = m.connectivity.size();
+  obj2[3].texture_id = glhelper::load_texture("data/grass.tga");CHECK_GL_ERROR();
+  obj2[3].visible = true;
+  obj2[3].prog = shader_program_id;
+
+  obj2[3].tr.translation = vec3(1.8f , 0.8f, -5.0);
 }
