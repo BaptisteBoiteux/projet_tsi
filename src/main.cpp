@@ -6,6 +6,8 @@
  \*****************************************************************************/
 
 #include "declaration.h"
+#include <unistd.h>
+ 
 
 //identifiant des shaders
 GLuint shader_program_id;
@@ -15,8 +17,9 @@ camera cam;
 int temps = 0;
 int nbr;
 
-const int nb_obj = 9;
-objet3d obj[nb_obj][nb_obj];
+const int nb_obj = 13;
+const int nb_mur = 4;
+objet3d obj[nb_obj][nb_obj][nb_mur];
 
 const int nb_obj2 = 4;
 objet3d obj2[nb_obj2];
@@ -27,6 +30,7 @@ text text_to_draw[nb_text];
 float angle_z_model_1 = 0.0f;
 float angle_z_model_5 = 0.0f;
 
+unsigned int sleep (unsigned int nb_sec);
 
 /*****************************************************************************\
 * initialisation                                                              *
@@ -56,6 +60,8 @@ static void init()
   text_to_draw[0].bottomLeft = vec2(-0.2, 0.5);
   text_to_draw[0].topRight = vec2(0.2, 1);
   init_text(text_to_draw);
+
+
 }
 
 /*****************************************************************************\
@@ -70,10 +76,12 @@ static void init()
   for(int i = 0; i < nb_obj2; ++i)
     draw_obj3d(obj2 + i, cam);
 
+   for(int k = 0; k < nb_mur; ++k){
   for(int i = 0; i < nb_obj; ++i){
    for(int j = 0; j < nb_obj; ++j){
-      draw_obj3d(&obj[i][j] , cam);
+      draw_obj3d(&obj[i][j][k] , cam);
 
+  }
   }
   }
 
@@ -166,10 +174,10 @@ static void special_callback(int key, int, int)
 static void timer_callback(int)
 {
 
-
+for (int k =0; k<nb_mur; k++){
     for(int i = 0; i < nb_obj; ++i){
    for(int j = 0; j < nb_obj; ++j){
-         obj[i][j].tr.translation.z+=0.02;}}
+         obj[i][j][k].tr.translation.z+=0.02;}}}
 
   glutTimerFunc(25, timer_callback, 0);
   glutPostRedisplay();
@@ -177,7 +185,10 @@ static void timer_callback(int)
 
 /*****************************************************************************\
 * main                                                                         *
-\*****************************************************************************/
+\***************************************  sleep(2);
+
+
+  init_model_3();**************************************/
 int main(int argc, char** argv)
 {
   glutInit(&argc, argv);
@@ -287,6 +298,9 @@ void draw_obj3d(const objet3d* const obj, camera cam)
 
   glBindTexture(GL_TEXTURE_2D, obj->texture_id);                            CHECK_GL_ERROR();
   glDrawElements(GL_TRIANGLES, 3*obj->nb_triangle, GL_UNSIGNED_INT, 0);     CHECK_GL_ERROR();
+
+
+
 }
 
 void init_text(text *t){
@@ -391,33 +405,67 @@ void init_model_2()
 
 
 void init_model_3(){
-for (int k = 0; k<9; k++){
-  for(int j = 0; j<9; j++){
-  // Chargement d'un maillage a partir d'un fichier
-  mesh m = load_obj_file("data/cube.obj");
+for (int i=0; i<nb_mur; i++){  
+  for (int k = 0; k<nb_obj; k++){
+    for(int j = 0; j<nb_obj; j++){
+    // Chargement d'un maillage a partir d'un fichier
+    mesh m = load_obj_file("data/cube.obj");
 
-  // Affecte une transformation sur les sommets du maillage
-float s = 0.2f;
-  mat4 transform = mat4(   s, 0.0f, 0.0f, 0.0f,
-      0.0f,    s, 0.0f, 0.0f,
-      0.0f, 0.0f,   s , 0.0f,
-      0.0f, 0.0f, 0.0f, 1.0f);
-  apply_deformation(&m,transform);
+    // Affecte une transformation sur les sommets du maillage
+    float s = 0.2f;
+    mat4 transform = mat4(   s, 0.0f, 0.0f, 0.0f,
+        0.0f,    s, 0.0f, 0.0f,
+        0.0f, 0.0f,   s , 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f);
+    apply_deformation(&m,transform);
+   
+    // Centre la rotation du modele 1 autour de son centre de gravite approximatif
+    obj[k][j][i].tr.rotation_center = vec3(0.0f,0.0f,0.0f);
 
-  // Centre la rotation du modele 1 autour de son centre de gravite approximatif
-  obj[k][j].tr.rotation_center = vec3(0.0f,0.0f,0.0f);
+    update_normals(&m);
+    fill_color(&m,vec3(1.0f,1.0f,1.0f));
 
-  update_normals(&m);
-fill_color(&m,vec3(1.0f,1.0f,1.0f));
+    obj[k][j][i].vao = upload_mesh_to_gpu(m);
 
-  obj[k][j].vao = upload_mesh_to_gpu(m);
+    obj[k][j][i].nb_triangle = m.connectivity.size();
+  
+   
+    obj[k][j][i].texture_id = glhelper::load_texture("data/grass.tga");CHECK_GL_ERROR();
 
-  obj[k][j].nb_triangle = m.connectivity.size();
-  obj[k][j].texture_id = glhelper::load_texture("data/grass.tga");CHECK_GL_ERROR();
-  obj[k][j].visible = true;
-  obj[k][j].prog = shader_program_id;
+  
+ if (i==0){
+    if (((k<=3) && (j>=3)&&(j<=7))){
+       obj[k][j][i].visible = false;
+    }
+    else {
+       obj[k][j][i].visible = true;
+    }
+ }
 
-  obj[k][j].tr.translation = vec3(0.0 +0.55*j, 0.0+0.55*k, -10.0);
+  if (i==1){
+    if (((k>=3) && (k<=6) &&(j>=3)&&(j<=7))){
+       obj[k][j][i].visible = false;
+    }
+    else {
+       obj[k][j][i].visible = true;
+    }
+ }
+
+   if (i==2){
+    if ((((k==4)||(k==5)||(k==7))&&(j==4))|| ((k>5) && (k<=6) &&(j>=2)&&(j<=6))){
+       obj[k][j][i].visible = false;
+    }
+    else {
+       obj[k][j][i].visible = true;
+    }
+ }
+
+
+    obj[k][j][i].prog = shader_program_id;
+
+    obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10.0-i*5);
+
+}
 }
 }
 }
