@@ -21,7 +21,7 @@ const int nb_obj = 13;
 const int nb_mur = 4;
 objet3d obj[nb_obj][nb_obj][nb_mur];
 
-const int nb_obj2 = 4;
+const int nb_obj2 = 6;
 objet3d obj2[nb_obj2];
 
 const int nb_text = 2;
@@ -52,6 +52,7 @@ static void init()
   init_model_3();
   init_model_4();
   init_model_5();
+  init_model_6();
   cam.tr.translation = obj2[1].tr.translation +vec3(0.0f, 2.0f, 4.0f) ;
   cam.tr.rotation_euler = vec3(M_PI/12,0.0f,0.0f);
 
@@ -309,8 +310,6 @@ void draw_obj3d(const objet3d* const obj, camera cam)
   glBindTexture(GL_TEXTURE_2D, obj->texture_id);                            CHECK_GL_ERROR();
   glDrawElements(GL_TRIANGLES, 3*obj->nb_triangle, GL_UNSIGNED_INT, 0);     CHECK_GL_ERROR();
 
-
-
 }
 
 void init_text(text *t){
@@ -372,11 +371,6 @@ GLuint upload_mesh_to_gpu(const mesh& m)
 
   return vao;
 }
-
-
-
-
-
 
 
 
@@ -542,4 +536,37 @@ void init_model_5()
   obj2[3].prog = shader_program_id;
 
   obj2[3].tr.translation = vec3(1.8f , 0.8f, -5.0);
+}
+
+void init_model_6()
+{
+    mesh m = load_obj_file("data/cube.obj");
+
+  // Affecte une transformation sur les sommets du maillage
+
+  float s = 30.0f;
+  float s2 = 0.002f;
+  float s3 = 100.0f;
+  mat4 transform = mat4(   s, 0.0f, 0.0f, 0.0f,
+      0.0f,    s2, 0.0f, 0.0f,
+      0.0f, 0.0f,   s3 , 0.0f,
+      0.0f, 0.0f, 0.0f, 1.0f);
+  apply_deformation(&m,transform);
+
+   update_normals(&m);
+  fill_color(&m,vec3(1.0f,1.0f,1.0f));
+
+  // Centre la rotation du modele 1 autour de son centre de gravite approximatif
+  obj2[4].tr.rotation_center = vec3(0.2f,-0.4f,0.0f);
+
+  //fill_color(&m,vec3(0.5f,0.0f,1.0f));
+
+  obj2[4].vao = upload_mesh_to_gpu(m);
+
+  obj2[4].nb_triangle = m.connectivity.size();
+  obj2[4].texture_id = glhelper::load_texture("data/route.tga");CHECK_GL_ERROR();
+  obj2[4].visible = true;
+  obj2[4].prog = shader_program_id;
+
+  obj2[4].tr.translation = obj2[1].tr.translation + vec3(0.0f,-0.6f,0.0f);
 }
