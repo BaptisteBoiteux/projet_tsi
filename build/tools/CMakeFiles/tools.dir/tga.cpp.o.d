@@ -1,7 +1,6 @@
 tools/CMakeFiles/tools.dir/tga.cpp.o: \
- /home/julien/Documents/projet_tsi/tools/tga.cpp \
- /usr/include/stdc-predef.h \
- /home/julien/Documents/projet_tsi/tools/stb_image.h /usr/include/stdio.h \
+ /home/julien/Images/projet_tsi/tools/tga.cpp /usr/include/stdc-predef.h \
+ /home/julien/Images/projet_tsi/tools/stb_image.h /usr/include/stdio.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/x86_64-linux-gnu/sys/cdefs.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
@@ -82,9 +81,8 @@ tools/CMakeFiles/tools.dir/tga.cpp.o: \
  /usr/lib/gcc/x86_64-linux-gnu/9/include/xmmintrin.h \
  /usr/lib/gcc/x86_64-linux-gnu/9/include/mmintrin.h \
  /usr/lib/gcc/x86_64-linux-gnu/9/include/mm_malloc.h \
- /home/julien/Documents/projet_tsi/tools/image.hpp \
- /usr/include/c++/9/string /usr/include/c++/9/bits/stringfwd.h \
- /usr/include/c++/9/bits/memoryfwd.h \
+ /home/julien/Images/projet_tsi/tools/image.hpp /usr/include/c++/9/string \
+ /usr/include/c++/9/bits/stringfwd.h /usr/include/c++/9/bits/memoryfwd.h \
  /usr/include/c++/9/bits/char_traits.h \
  /usr/include/c++/9/bits/stl_algobase.h \
  /usr/include/c++/9/bits/functexcept.h \

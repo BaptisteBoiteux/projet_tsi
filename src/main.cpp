@@ -40,7 +40,7 @@ static void init()
   shader_program_id = glhelper::create_program_from_file("shaders/shader.vert", "shaders/shader.frag"); CHECK_GL_ERROR();
 
   cam.projection = matrice_projection(60.0f*M_PI/180.0f,1.0f,0.01f,100.0f);
-  cam.tr.translation = vec3(2.0f, 0.0f,1.0f);
+
    
   //cam.tr.translation = vec3(0.0f, 1.0f, 0.0f);
 
@@ -52,7 +52,8 @@ static void init()
   init_model_3();
   init_model_4();
   init_model_5();
-
+  cam.tr.translation = obj2[1].tr.translation +vec3(0.0f, 2.0f, 4.0f) ;
+  cam.tr.rotation_euler = vec3(M_PI/12,0.0f,0.0f);
 
   gui_program_id = glhelper::create_program_from_file("shaders/gui.vert", "shaders/gui.frag"); CHECK_GL_ERROR();
 
@@ -88,10 +89,6 @@ static void init()
   for(int i = 0; i < nb_text; ++i){
     draw_text(text_to_draw + i);}
 
-  if (nbr==1){
-  cam.tr.translation = obj2[1].tr.translation   +vec3(0.0f, 2.0f, 3.0f);
-  nbr=1;
-  }
 
 
   temps++;
@@ -99,6 +96,18 @@ static void init()
   text_to_draw[1].value = std::to_string(temps);
   text_to_draw[1].bottomLeft = vec2(-1, 0.90);
   text_to_draw[1].topRight = vec2(-0.90, 1);
+
+for (int i=0; i<nb_mur; i++){
+  for (int j =0; j<nb_obj;j++){
+    for (int k =0; k<nb_obj; k++){
+  
+      if (obj[j][k][i].tr.translation.z > obj2[1].tr.translation.z+0.6){
+        obj[j][k][i].visible=false;
+      }
+    }
+  }
+}
+
 
   glutSwapBuffers();
 }
@@ -164,7 +173,8 @@ static void special_callback(int key, int, int)
       break;
   }
     //déplacememnt de la cam en même temps que le mouvementud monstre
-  cam.tr.translation = obj2[1].tr.translation   +vec3(0.0f, 1.0f, 3.0f);
+  cam.tr.translation = obj2[1].tr.translation   +vec3(0.0f, 2.0f, 4.0f);
+  cam.tr.rotation_euler = vec3(M_PI/12,0.0f,0.0f);
 }
 
 
