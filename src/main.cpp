@@ -6,7 +6,7 @@
  \*****************************************************************************/
 
 #include "declaration.h"
-#include <unistd.h>
+//#include <unistd.h>
  
 
 //identifiant des shaders
@@ -90,11 +90,11 @@ static void init()
   for(int i = 0; i < nb_text; ++i){
     draw_text(text_to_draw + i);}
 
-
-
+  //mise à jour du timer 
   temps++;
   text_to_draw[1] = text_to_draw[0];
-  text_to_draw[1].value = std::to_string(temps);
+  //Ici le temps est incrémenté toutes les 25 ms, donc on le divise par 40 pour afficher les secondes.
+  text_to_draw[1].value = std::to_string(temps/40);
   text_to_draw[1].bottomLeft = vec2(-1, 0.90);
   text_to_draw[1].topRight = vec2(-0.90, 1);
 
@@ -173,7 +173,7 @@ static void special_callback(int key, int, int)
 
       break;
   }
-    //déplacememnt de la cam en même temps que le mouvementud monstre
+    //déplacement de la caméra en même temps que le mouvement du personnage
   cam.tr.translation = obj2[1].tr.translation   +vec3(0.0f, 2.0f, 4.0f);
   cam.tr.rotation_euler = vec3(M_PI/12,0.0f,0.0f);
 }
@@ -196,6 +196,7 @@ for (int k =0; k<nb_mur; k++){
 
 /*****************************************************************************\
 * main                                                                         *
+\***************************************  sleep(2);
 \***************************************  sleep(2);
 
 
@@ -436,16 +437,33 @@ for (int i=0; i<nb_mur; i++){
    
     obj[k][j][i].texture_id = glhelper::load_texture("data/grass.tga");CHECK_GL_ERROR();
 
-  
+//Création des matrices :
+    int matrice[nb_obj][nb_obj];
+    for (int l = 0; l < nb_obj; l++) {
+        for (int m = 0; m < nb_obj; m++) {
+            if (((k <= 3) && (j >= 3) && (j <= 7)))
+            {
+                matrice[l][m] = 0;
+            }
+            else {
+                matrice[l][m] = 1;
+            }
+        }
+    }
+
+
  if (i==0){
-    if (((k<=3) && (j>=3)&&(j<=7))){
+     if (matrice[k][j]) {
+         obj[k][j][i].visible = true;
+     }
+    /*if () {
        obj[k][j][i].visible = false;
     }
     else {
        obj[k][j][i].visible = true;
-    }
+    }*/
  }
-
+ // Création des trous à la main.
   if (i==1){
     if (((k>=3) && (k<=6) &&(j>=3)&&(j<=7))){
        obj[k][j][i].visible = false;
