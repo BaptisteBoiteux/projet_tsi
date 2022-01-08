@@ -20,6 +20,8 @@ int score = 0;
 const int nb_obj = 13;
 const int nb_mur = 4;
 const int nb_matrice = 3;
+int matrice[nb_matrice][nb_obj][nb_obj];
+
 objet3d obj[nb_obj][nb_obj][nb_mur];
 
 const int nb_obj2 = 6;
@@ -119,7 +121,7 @@ for (int i=0; i<nb_mur; i++){
 
 
       if (obj[j][k][i].tr.translation.z > obj2[1].tr.translation.z+0.6  ){
-        obj[j][k][i].visible=false;
+        obj[j][k][i].tr.translation.z = -31;
       }
     }
   }
@@ -202,9 +204,55 @@ static void timer_callback(int)
 {
 
 for (int k =0; k<nb_mur; k++){
-    for(int i = 0; i < nb_obj; ++i){
-   for(int j = 0; j < nb_obj; ++j){
-         obj[i][j][k].tr.translation.z+=0.02;}}}
+  for(int i = 0; i < nb_obj; ++i){
+    for(int j = 0; j < nb_obj; ++j){
+      obj[i][j][k].tr.translation.z+=0.3;
+    }
+  }
+}
+/*
+
+if (temps == 600){
+  for (int i=0; i<nb_mur; i++){  
+    for (int k = 0; k<nb_obj; k++){
+      for(int j = 0; j<nb_obj; j++){
+        obj[k][j][i].visible = true;
+      }}}
+}
+
+if (temps == 1000){
+  for (int i=0; i<nb_mur; i++){  
+    for (int k = 0; k<nb_obj; k++){
+      for(int j = 0; j<nb_obj; j++){
+        
+
+        
+
+        if (i==0){
+          if (!matrice[i][k][j]) {
+            obj[k][j][i].visible = false;
+          }
+        }
+        if (i == 1) {
+          if (!matrice[i][k][j]) {
+            obj[k][j][i].visible = false;
+          }
+        }
+        if (i == 2) {
+          if (!matrice[i][k][j]) {
+            obj[k][j][i].visible = false;
+          }
+        }
+
+    obj[k][j][i].prog = shader_program_id;
+    obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10.0-i*7);
+
+    }
+  }
+}
+}
+*/
+    
 
   glutTimerFunc(25, timer_callback, 0);
   glutPostRedisplay();
@@ -411,7 +459,7 @@ void init_model_2()
   // Centre la rotation du modele 1 autour de son centre de gravite approximatif
   obj2[1].tr.rotation_center = vec3(-0.2f,-0.4f,0.0f);
 
-
+   
   //fill_color(&m,vec3(0.5f,0.0f,1.0f));
 
   obj2[1].vao = upload_mesh_to_gpu(m);
@@ -455,7 +503,6 @@ for (int i=0; i<nb_mur; i++){
     obj[k][j][i].texture_id = glhelper::load_texture("data/grass.tga");CHECK_GL_ERROR();
 
 //Création des matrices :
-    int matrice[nb_matrice][nb_obj][nb_obj];
     for (int n = 0; n < nb_matrice; n++) {
         if (n == 0) {
             for (int l = 0; l < nb_obj; l++) {
@@ -473,7 +520,7 @@ for (int i=0; i<nb_mur; i++){
         if (n == 1) {
             for (int l = 0; l < nb_obj; l++) {
                 for (int m = 0; m < nb_obj; m++) {
-                    if (((k <= 2) && (j == 5))){
+                    if (((k <= 3) && (j == 5))){
                         matrice[n][l][m] = 0;
                     }
                     else {
@@ -485,7 +532,7 @@ for (int i=0; i<nb_mur; i++){
         if (n == 2) {
             for (int l = 0; l < nb_obj; l++) {
                 for (int m = 0; m < nb_obj; m++) {
-                    if (((k <= 1) && (j == 5)) || ((k == 2) && (j >=3) && (j <= 7))) {
+                    if (((k <= 3) && (j == 5)) || ((k == 2) && (j >=3) && (j <= 7))) {
                         matrice[n][l][m] = 0;
                     }
                     else {
