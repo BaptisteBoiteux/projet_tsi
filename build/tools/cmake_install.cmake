@@ -1,4 +1,4 @@
-# Install script for directory: /home/julien/Images/projet_tsi/tools
+# Install script for directory: /home/julien/Documents/projet_tsi/tools
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

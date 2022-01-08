@@ -1,5 +1,5 @@
 tools/CMakeFiles/tools.dir/glhelper.cpp.o: \
- /home/julien/Images/projet_tsi/tools/glhelper.cpp \
+ /home/julien/Documents/projet_tsi/tools/glhelper.cpp \
  /usr/include/stdc-predef.h /usr/include/c++/9/ctime \
  /usr/include/x86_64-linux-gnu/c++/9/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/9/bits/os_defines.h \
@@ -144,6 +144,6 @@ tools/CMakeFiles/tools.dir/glhelper.cpp.o: \
  /usr/include/x86_64-linux-gnu/c++/9/bits/basic_file.h \
  /usr/include/x86_64-linux-gnu/c++/9/bits/c++io.h \
  /usr/include/c++/9/bits/fstream.tcc \
- /home/julien/Images/projet_tsi/tools/glhelper.hpp /usr/include/GL/glew.h \
- /usr/include/GL/glu.h /usr/include/GL/gl.h \
- /home/julien/Images/projet_tsi/tools/image.hpp
+ /home/julien/Documents/projet_tsi/tools/glhelper.hpp \
+ /usr/include/GL/glew.h /usr/include/GL/glu.h /usr/include/GL/gl.h \
+ /home/julien/Documents/projet_tsi/tools/image.hpp

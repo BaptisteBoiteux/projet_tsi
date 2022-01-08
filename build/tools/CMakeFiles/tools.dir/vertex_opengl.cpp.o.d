@@ -1,8 +1,8 @@
 tools/CMakeFiles/tools.dir/vertex_opengl.cpp.o: \
- /home/julien/Images/projet_tsi/tools/vertex_opengl.cpp \
+ /home/julien/Documents/projet_tsi/tools/vertex_opengl.cpp \
  /usr/include/stdc-predef.h \
- /home/julien/Images/projet_tsi/tools/vertex_opengl.hpp \
- /home/julien/Images/projet_tsi/tools/vec3.hpp \
+ /home/julien/Documents/projet_tsi/tools/vertex_opengl.hpp \
+ /home/julien/Documents/projet_tsi/tools/vec3.hpp \
  /usr/include/c++/9/iostream \
  /usr/include/x86_64-linux-gnu/c++/9/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/9/bits/os_defines.h \
@@ -139,4 +139,4 @@ tools/CMakeFiles/tools.dir/vertex_opengl.cpp.o: \
  /usr/include/c++/9/bits/basic_ios.tcc \
  /usr/include/c++/9/bits/ostream.tcc /usr/include/c++/9/istream \
  /usr/include/c++/9/bits/istream.tcc \
- /home/julien/Images/projet_tsi/tools/vec2.hpp
+ /home/julien/Documents/projet_tsi/tools/vec2.hpp
