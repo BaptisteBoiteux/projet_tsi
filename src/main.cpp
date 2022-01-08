@@ -15,16 +15,17 @@ GLuint gui_program_id;
 
 camera cam;
 int temps = 0;
-int nbr;
+int score = 0;
 
 const int nb_obj = 13;
 const int nb_mur = 4;
+const int nb_matrice = 3;
 objet3d obj[nb_obj][nb_obj][nb_mur];
 
 const int nb_obj2 = 6;
 objet3d obj2[nb_obj2];
 
-const int nb_text = 2;
+const int nb_text = 3;
 text text_to_draw[nb_text];
 
 float angle_z_model_1 = 0.0f;
@@ -58,10 +59,15 @@ static void init()
 
   gui_program_id = glhelper::create_program_from_file("shaders/gui.vert", "shaders/gui.frag"); CHECK_GL_ERROR();
 
- text_to_draw[0].value = "Le Best Binome";
-  text_to_draw[0].bottomLeft = vec2(-0.2, 0.5);
-  text_to_draw[0].topRight = vec2(0.2, 1);
-  init_text(text_to_draw);
+text_to_draw[0].value = "Le Best Binome";
+text_to_draw[0].bottomLeft = vec2(-0.2, 0.5);
+text_to_draw[0].topRight = vec2(0.2, 1);
+
+text_to_draw[2].value = "Score";
+text_to_draw[2].bottomLeft = vec2(0.8, 0.8);
+text_to_draw[2].topRight = vec2(1, 1.4);
+
+init_text(text_to_draw);
 
 
 }
@@ -81,7 +87,9 @@ static void init()
    for(int k = 0; k < nb_mur; ++k){
   for(int i = 0; i < nb_obj; ++i){
    for(int j = 0; j < nb_obj; ++j){
+
       draw_obj3d(&obj[i][j][k] , cam);
+     
 
   }
   }
@@ -98,11 +106,19 @@ static void init()
   text_to_draw[1].bottomLeft = vec2(-1, 0.90);
   text_to_draw[1].topRight = vec2(-0.90, 1);
 
+  //Gestion du score
+  text_to_draw[2] = text_to_draw[0];
+  text_to_draw[2].value = "Score :"+ std::to_string(score);
+  text_to_draw[2].bottomLeft = vec2(0.5, 0.0);
+  text_to_draw[2].topRight = vec2(1, 0.9);
+
 for (int i=0; i<nb_mur; i++){
   for (int j =0; j<nb_obj;j++){
     for (int k =0; k<nb_obj; k++){
-  
-      if (obj[j][k][i].tr.translation.z > obj2[1].tr.translation.z+0.6){
+      
+
+
+      if (obj[j][k][i].tr.translation.z > obj2[1].tr.translation.z+0.6  ){
         obj[j][k][i].visible=false;
       }
     }
@@ -320,7 +336,7 @@ void init_text(text *t){
   vec3 p3=vec3( 1.0f, 0.0f, 0.0f);
 
   vec3 geometrie[4] = {p0, p1, p2, p3}; 
-  triangle_index index[2] = { triangle_index(0, 1, 2), triangle_index(0, 2, 3)};
+  triangle_index index[3] = { triangle_index(0, 1, 2), triangle_index(0, 2, 3), triangle_index(1, 2, 3)};
 
   glGenVertexArrays(1, &(t->vao));                                              CHECK_GL_ERROR();
   glBindVertexArray(t->vao);                                                  CHECK_GL_ERROR();
@@ -432,44 +448,75 @@ for (int i=0; i<nb_mur; i++){
 
     obj[k][j][i].vao = upload_mesh_to_gpu(m);
 
-    obj[k][j][i].nb_triangle = m.connectivity.size();
-  
+   obj[k][j][i].visible = true;
+   obj[k][j][i].nb_triangle = m.connectivity.size();
+    
    
     obj[k][j][i].texture_id = glhelper::load_texture("data/grass.tga");CHECK_GL_ERROR();
 
 //Création des matrices :
-    int matrice[nb_obj][nb_obj];
-    for (int l = 0; l < nb_obj; l++) {
-        for (int m = 0; m < nb_obj; m++) {
-            if (((k <= 3) && (j >= 3) && (j <= 7)))
-            {
-                matrice[l][m] = 0;
+    int matrice[nb_matrice][nb_obj][nb_obj];
+    for (int n = 0; n < nb_matrice; n++) {
+        if (n == 0) {
+            for (int l = 0; l < nb_obj; l++) {
+                for (int m = 0; m < nb_obj; m++) {
+                    if (((k <= 3) && (j >= 3) && (j <= 7)))
+                    {
+                        matrice[n][l][m] = 0;
+                    }
+                    else {
+                        matrice[n][l][m] = 1;
+                    }
+                }
             }
-            else {
-                matrice[l][m] = 1;
+        }
+        if (n == 1) {
+            for (int l = 0; l < nb_obj; l++) {
+                for (int m = 0; m < nb_obj; m++) {
+                    if (((k <= 2) && (j == 5))){
+                        matrice[n][l][m] = 0;
+                    }
+                    else {
+                        matrice[n][l][m] = 1;
+                    }
+                }
+            }
+        }
+        if (n == 2) {
+            for (int l = 0; l < nb_obj; l++) {
+                for (int m = 0; m < nb_obj; m++) {
+                    if (((k <= 1) && (j == 5)) || ((k == 2) && (j >=3) && (j <= 7))) {
+                        matrice[n][l][m] = 0;
+                    }
+                    else {
+                        matrice[n][l][m] = 1;
+                    }
+                }
             }
         }
     }
 
 
  if (i==0){
-     if (matrice[k][j]) {
-         obj[k][j][i].visible = true;
+     if (!matrice[i][k][j]) {
+         obj[k][j][i].visible = false;
      }
-    /*if () {
-       obj[k][j][i].visible = false;
-    }
-    else {
-       obj[k][j][i].visible = true;
-    }*/
  }
+if (i == 1) {
+    if (!matrice[i][k][j]) {
+        obj[k][j][i].visible = false;
+    }
+}
+if (i == 2) {
+    if (!matrice[i][k][j]) {
+        obj[k][j][i].visible = false;
+    }
+}
+
  // Création des trous à la main.
-  if (i==1){
+  /*if (i == 1) {
     if (((k>=3) && (k<=6) &&(j>=3)&&(j<=7))){
        obj[k][j][i].visible = false;
-    }
-    else {
-       obj[k][j][i].visible = true;
     }
  }
 
@@ -477,15 +524,12 @@ for (int i=0; i<nb_mur; i++){
     if ((((k==4)||(k==5)||(k==7))&&(j==4))|| ((k>5) && (k<=6) &&(j>=2)&&(j<=6))){
        obj[k][j][i].visible = false;
     }
-    else {
-       obj[k][j][i].visible = true;
-    }
- }
+ }*/
 
 
     obj[k][j][i].prog = shader_program_id;
 
-    obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10.0-i*5);
+    obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10.0-i*7);
 
 }
 }
