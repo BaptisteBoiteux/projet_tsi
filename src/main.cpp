@@ -17,12 +17,15 @@ camera cam;
 int temps = 0;
 int score = 0;
 
+
 const int nb_obj = 13;
-const int nb_mur = 4;
+const int nb_mur = 3;
 const int nb_matrice = 3;
 int matrice[nb_matrice][nb_obj][nb_obj];
 
 objet3d obj[nb_obj][nb_obj][nb_mur];
+
+int config[nb_mur];
 
 const int nb_obj2 = 6;
 objet3d obj2[nb_obj2];
@@ -79,26 +82,27 @@ init_text(text_to_draw);
 \*****************************************************************************/
  static void display_callback()
 {
-  glClearColor(0.5f, 0.6f, 0.9f, 1.0f); CHECK_GL_ERROR();
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); CHECK_GL_ERROR();
+ glClearColor(0.5f, 0.6f, 0.9f, 1.0f); CHECK_GL_ERROR();
+ glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); CHECK_GL_ERROR();
 
 
-  for(int i = 0; i < nb_obj2; ++i)
-    draw_obj3d(obj2 + i, cam);
+ for (int i = 0; i < nb_obj2; ++i) {
+     draw_obj3d(obj2 + i, cam);
+ }
 
-   for(int k = 0; k < nb_mur; ++k){
-  for(int i = 0; i < nb_obj; ++i){
-   for(int j = 0; j < nb_obj; ++j){
+    for(int k = 0; k < nb_mur; ++k){
+        for(int i = 0; i < nb_obj; ++i){
+            for(int j = 0; j < nb_obj; ++j){
 
-      draw_obj3d(&obj[i][j][k] , cam);
-     
+            draw_obj3d(&obj[i][j][k] , cam);
+   
+            }
+        }
+    }
 
-  }
-  }
-  }
-
-  for(int i = 0; i < nb_text; ++i){
-    draw_text(text_to_draw + i);}
+    for(int i = 0; i < nb_text; ++i){
+    draw_text(text_to_draw + i);
+    }
 
   //mise à jour du timer 
   temps++;
@@ -110,7 +114,7 @@ init_text(text_to_draw);
 
   //Gestion du score
   text_to_draw[2] = text_to_draw[0];
-  text_to_draw[2].value = "Score :"+ std::to_string(score);
+  text_to_draw[2].value = "Score :"+ std::to_string(score) + std::to_string(((obj2[1].tr.translation.x) / 0.4));
   text_to_draw[2].bottomLeft = vec2(0.5, 0.0);
   text_to_draw[2].topRight = vec2(1, 0.9);
 
@@ -126,6 +130,14 @@ for (int i=0; i<nb_mur; i++){
     }
   }
 }
+
+//Teste si le personnage est proche du mur (va permettre d'analyser sa position)
+if (abs(obj[0][0][0].tr.translation.z - obj2[1].tr.translation.z ) < 0.012) {
+    if (abs(((obj2[1].tr.translation.x) / 0.4) - 6) < 0.1){
+        score++;
+    }
+}
+
 
 
   glutSwapBuffers();
@@ -163,7 +175,7 @@ static void keyboard_callback(unsigned char key, int, int)
 \*****************************************************************************/
 static void special_callback(int key, int, int)
 {
-  float dL=0.03f;
+  float dL=0.04f;
   switch (key)
   {
     case GLUT_KEY_UP:
@@ -576,7 +588,7 @@ if (i == 2) {
 
     obj[k][j][i].prog = shader_program_id;
 
-    obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10.0-i*7);
+    obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10-i*7); //avant le z était en -10
 
 }
 }
