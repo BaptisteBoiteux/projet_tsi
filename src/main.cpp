@@ -53,7 +53,7 @@ static void init()
   init_model_3();
   init_model_4();
   init_model_5();
-  init_model_6();
+  //init_model_6();
   cam.tr.translation = obj2[1].tr.translation +vec3(0.0f, 2.0f, 4.0f) ;
   cam.tr.rotation_euler = vec3(M_PI/12,0.0f,0.0f);
 
@@ -398,7 +398,7 @@ void init_model_2()
   // Affecte une transformation sur les sommets du maillage
 
   float s = 0.2f;
-  float s2 = 0.6f;
+  float s2 = 0.8f;
   mat4 transform = mat4(   s, 0.0f, 0.0f, 0.0f,
       0.0f,    s2, 0.0f, 0.0f,
       0.0f, 0.0f,   s , 0.0f,
@@ -411,7 +411,7 @@ void init_model_2()
   // Centre la rotation du modele 1 autour de son centre de gravite approximatif
   obj2[1].tr.rotation_center = vec3(-0.2f,-0.4f,0.0f);
 
-   
+
   //fill_color(&m,vec3(0.5f,0.0f,1.0f));
 
   obj2[1].vao = upload_mesh_to_gpu(m);
@@ -421,7 +421,7 @@ void init_model_2()
   obj2[1].visible = true;
   obj2[1].prog = shader_program_id;
 
-  obj2[1].tr.translation = vec3(2.2f , 0.0f, -5.0);
+  obj2[1].tr.translation = vec3(2.2f , 0.6f, -5.0);
 }
 
 
@@ -565,7 +565,7 @@ void init_model_4()
   obj2[2].visible = true;
   obj2[2].prog = shader_program_id;
 
-  obj2[2].tr.translation = vec3(2.6f , 0.8f, -5.0);
+  obj2[2].tr.translation = vec3(2.6f , 1.4f, -5.0);
 }
 
 void init_model_5()
@@ -597,8 +597,9 @@ void init_model_5()
   obj2[3].visible = true;
   obj2[3].prog = shader_program_id;
 
-  obj2[3].tr.translation = vec3(1.8f , 0.8f, -5.0);
+  obj2[3].tr.translation = vec3(1.8f , 1.4f, -5.0);
 }
+/*
 
 void init_model_6()
 {
@@ -631,4 +632,4 @@ void init_model_6()
   obj2[4].prog = shader_program_id;
 
   obj2[4].tr.translation = obj2[1].tr.translation + vec3(0.0f,-0.6f,0.0f);
-}
+}*/

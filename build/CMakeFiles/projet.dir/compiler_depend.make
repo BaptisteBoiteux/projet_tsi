@@ -204,21 +204,8 @@ CMakeFiles/projet.dir/src/main.cpp.o: ../src/main.cpp \
   /usr/include/c++/9/bits/stl_uninitialized.h \
   /usr/include/c++/9/bits/stl_vector.h \
   /usr/include/c++/9/bits/stl_bvector.h \
-  /usr/include/c++/9/bits/vector.tcc \
-  /usr/include/unistd.h \
-  /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
-  /usr/include/x86_64-linux-gnu/bits/environments.h \
-  /usr/include/x86_64-linux-gnu/bits/confname.h \
-  /usr/include/x86_64-linux-gnu/bits/getopt_posix.h \
-  /usr/include/x86_64-linux-gnu/bits/getopt_core.h \
-  /usr/include/x86_64-linux-gnu/bits/unistd_ext.h
+  /usr/include/c++/9/bits/vector.tcc
 
-
-/usr/include/x86_64-linux-gnu/bits/unistd_ext.h:
-
-/usr/include/x86_64-linux-gnu/bits/confname.h:
-
-/usr/include/x86_64-linux-gnu/bits/posix_opt.h:
 
 /usr/include/c++/9/bits/stl_vector.h:
 
@@ -358,8 +345,6 @@ CMakeFiles/projet.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/x86_64-linux-gnu/bits/types/clock_t.h:
 
-/usr/include/x86_64-linux-gnu/bits/getopt_core.h:
-
 ../tools/glhelper.hpp:
 
 /usr/include/c++/9/debug/debug.h:
@@ -373,8 +358,6 @@ CMakeFiles/projet.dir/src/main.cpp.o: ../src/main.cpp \
 /usr/include/c++/9/bits/istream.tcc:
 
 /usr/include/wchar.h:
-
-/usr/include/unistd.h:
 
 /usr/include/x86_64-linux-gnu/sys/select.h:
 
@@ -500,8 +483,6 @@ CMakeFiles/projet.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
 
-/usr/include/x86_64-linux-gnu/bits/getopt_posix.h:
-
 /usr/include/c++/9/bits/predefined_ops.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/9/include/stdint.h:
@@ -621,8 +602,6 @@ CMakeFiles/projet.dir/src/main.cpp.o: ../src/main.cpp \
 /usr/include/c++/9/bits/postypes.h:
 
 /usr/include/c++/9/bits/basic_string.h:
-
-/usr/include/x86_64-linux-gnu/bits/environments.h:
 
 /usr/include/c++/9/bits/alloc_traits.h:
 
