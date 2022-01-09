@@ -118,7 +118,7 @@ init_text(text_to_draw);
 
   //Gestion du score
   text_to_draw[2] = text_to_draw[0];
-  text_to_draw[2].value = "Score :" + std::to_string(obj[2][ (int) (floor(obj2[1].tr.translation.x/0.4)) ][0].tr.translation.x ); //+ std::to_string((obj2[1].tr.translation.x+0.4)/0.4);
+  text_to_draw[2].value = "Score :" + std::to_string(score)+ std::to_string(obj[2][ (int) (floor(obj2[1].tr.translation.x/0.4+0.1)) ][1].tr.translation.x); //+ std::to_string((obj2[1].tr.translation.x+0.4)/0.4);
   text_to_draw[2].bottomLeft = vec2(0.5, 0.0);
   text_to_draw[2].topRight = vec2(1, 0.9);
 
@@ -141,12 +141,13 @@ for (int i = 0; i < nb_mur; i++) {
     for (int k = 0; k < nb_obj; k++) {
       //if ( (obj2[1].tr.translation.x/0.4)== ){
               //verification au niveau des x (un carré fait 0.4 de longeur et on prend en compte les imprécisions des float)
-              if ( ( abs (obj2[1].tr.translation.x/0.4 - obj[k][ (int) (floor(obj2[1].tr.translation.x/0.4)) ][i].tr.translation.x -obj2[1].tr.translation.x/0.4) <= 0.1)){ // && (abs ( obj2[1].tr.translation.x+0.4 - obj[k][ (int) (floor ((obj2[1].tr.translation.x+0.4)/0.4)) ][i].tr.translation.x -obj2[1].tr.translation.x+0.4)<=0.1)) {
+              // décalage de plus 0.1 dans la matrice pour avoir les bonnes coordonnées .
+              if  ( abs (obj2[1].tr.translation.x - obj[k][ (int) (floor(obj2[1].tr.translation.x/0.4+0.1)) ][i].tr.translation.x -obj2[1].tr.translation.x) <= 0.1){
                   score++;
                   a = 1;
               }
      // }
-              
+             //(abs ( obj2[1].tr.translation.x+0.4 - obj[k][ (int) (floor ((obj2[1].tr.translation.x+0.4)/0.4)) ][i].tr.translation.x -obj2[1].tr.translation.x+0.4)<=0.1)) 
               
         }
         if (a==0){
