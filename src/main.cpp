@@ -133,7 +133,7 @@ for (int i=0; i<nb_mur; i++){
   }
 }
 
-
+/*
 for (int i = 0; i < nb_mur; i++) {
   if (abs(obj[0][0][i].tr.translation.z - obj2[1].tr.translation.z) < 0.012) {
     for (int k = 0; k < nb_obj; k++) {
@@ -153,7 +153,7 @@ for (int i = 0; i < nb_mur; i++) {
           }
         }
     }
-}
+}*/
 
 
 
@@ -637,7 +637,7 @@ for (int i=0; i<nb_mur; i++){
             obj[k][j][i].tr.rotation_center = vec3(0.0f,0.0f,0.0f);
 
             update_normals(&m);
-            fill_color(&m,vec3(34.51f,16.08,1.0f));
+            fill_color(&m,vec3(88.0f,41.0f,0.0f));
 
             obj[k][j][i].vao = upload_mesh_to_gpu(m);
 
