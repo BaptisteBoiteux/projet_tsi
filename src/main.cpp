@@ -6,9 +6,9 @@
  \*****************************************************************************/
 
 #include "declaration.h"
+#include <sys/random.h>
+#include <stdlib.h>
 //#include <unistd.h>
- 
-
 //identifiant des shaders
 GLuint shader_program_id;
 GLuint gui_program_id;
@@ -16,11 +16,13 @@ GLuint gui_program_id;
 camera cam;
 int temps = 0;
 int score = 0;
-
+int min=0;
+int max =3;
+int alea; 
 
 const int nb_obj = 13;
-const int nb_mur = 3;
-const int nb_matrice = 3;
+const int nb_mur = 4;
+const int nb_matrice = 4;
 int matrice[nb_matrice][nb_obj][nb_obj];
 
 objet3d obj[nb_obj][nb_obj][nb_mur];
@@ -114,19 +116,18 @@ init_text(text_to_draw);
 
   //Gestion du score
   text_to_draw[2] = text_to_draw[0];
-  text_to_draw[2].value = "Score :"+ std::to_string(score) + std::to_string(((obj2[1].tr.translation.x) / 0.4));
+  text_to_draw[2].value = "Score :"+ std::to_string(score) + std::to_string(min + rand()%(max+1-min));
   text_to_draw[2].bottomLeft = vec2(0.5, 0.0);
   text_to_draw[2].topRight = vec2(1, 0.9);
 
-for (int i=0; i<nb_mur; i++){
+for (int i=0; i<nb_mur-1; i++){
   for (int j =0; j<nb_obj;j++){
     for (int k =0; k<nb_obj; k++){
-      
-
 
       if (obj[j][k][i].tr.translation.z > obj2[1].tr.translation.z+0.6  ){
-        obj[j][k][i].tr.translation.z = -31;
+        obj[j][k][i].tr.translation.z = -33;
       }
+      
     }
   }
 }
@@ -218,9 +219,12 @@ static void timer_callback(int)
 for (int k =0; k<nb_mur; k++){
   for(int i = 0; i < nb_obj; ++i){
     for(int j = 0; j < nb_obj; ++j){
-      obj[i][j][k].tr.translation.z+=0.3;
+      obj[i][j][k].tr.translation.z+=0.04;
     }
   }
+}
+if (temps == 600){
+init_model_3();
 }
 /*
 
@@ -486,7 +490,50 @@ void init_model_2()
 
 
 void init_model_3(){
+
+
+for (int n = 0; n < nb_matrice; n++) {
+if (n == 0) {
+    for (int l = 0; l < nb_obj; l++) {
+        for (int m = 0; m < nb_obj; m++) {
+            if (((l <= 3) && (m >= 3) && (m <= 7)))
+            {
+                matrice[n][l][m] = 0;
+            }
+            else {
+                matrice[n][l][m] = 1;
+            }
+        }
+    }
+}
+if (n == 1) {
+    for (int l = 0; l < nb_obj; l++) {
+        for (int m = 0; m < nb_obj; m++) {
+            if (((l <= 3) && (m == 5))){
+                matrice[n][l][m] = 0;
+            }
+            else {
+                matrice[n][l][m] = 1;
+            }
+        }
+    }
+}
+if (n == 2) {
+    for (int l = 0; l < nb_obj; l++) {
+        for (int m = 0; m < nb_obj; m++) {
+            if (((l <= 3) && (m == 5)) || ((l == 2) && (m >=3) && (m <= 7))) {
+                matrice[n][l][m] = 0;
+            }
+            else {
+                matrice[n][l][m] = 1;
+            }
+        }
+    }
+}
+}
+srand(time(NULL));
 for (int i=0; i<nb_mur; i++){  
+  alea = min + rand()%(max+1-min);
   for (int k = 0; k<nb_obj; k++){
     for(int j = 0; j<nb_obj; j++){
     // Chargement d'un maillage a partir d'un fichier
@@ -509,86 +556,53 @@ for (int i=0; i<nb_mur; i++){
     obj[k][j][i].vao = upload_mesh_to_gpu(m);
 
    obj[k][j][i].visible = true;
-   obj[k][j][i].nb_triangle = m.connectivity.size();
+
+ obj[k][j][i].nb_triangle = m.connectivity.size();
     
    
-    obj[k][j][i].texture_id = glhelper::load_texture("data/grass.tga");CHECK_GL_ERROR();
+  obj[k][j][i].texture_id = glhelper::load_texture("data/grass.tga");CHECK_GL_ERROR();
 
-//Création des matrices :
-    for (int n = 0; n < nb_matrice; n++) {
-        if (n == 0) {
-            for (int l = 0; l < nb_obj; l++) {
-                for (int m = 0; m < nb_obj; m++) {
-                    if (((k <= 3) && (j >= 3) && (j <= 7)))
-                    {
-                        matrice[n][l][m] = 0;
-                    }
-                    else {
-                        matrice[n][l][m] = 1;
-                    }
-                }
-            }
-        }
-        if (n == 1) {
-            for (int l = 0; l < nb_obj; l++) {
-                for (int m = 0; m < nb_obj; m++) {
-                    if (((k <= 3) && (j == 5))){
-                        matrice[n][l][m] = 0;
-                    }
-                    else {
-                        matrice[n][l][m] = 1;
-                    }
-                }
-            }
-        }
-        if (n == 2) {
-            for (int l = 0; l < nb_obj; l++) {
-                for (int m = 0; m < nb_obj; m++) {
-                    if (((k <= 3) && (j == 5)) || ((k == 2) && (j >=3) && (j <= 7))) {
-                        matrice[n][l][m] = 0;
-                    }
-                    else {
-                        matrice[n][l][m] = 1;
-                    }
-                }
-            }
-        }
+
+   
+    if(i==0){
+      if (!matrice[alea][k][j]) {
+          obj[k][j][i].visible = false;
+      }
     }
 
-
- if (i==0){
-     if (!matrice[i][k][j]) {
-         obj[k][j][i].visible = false;
-     }
- }
-if (i == 1) {
-    if (!matrice[i][k][j]) {
-        obj[k][j][i].visible = false;
+     if(i==1){
+      if (!matrice[alea][k][j]) {
+          obj[k][j][i].visible = false;
+      }
     }
-}
-if (i == 2) {
-    if (!matrice[i][k][j]) {
-        obj[k][j][i].visible = false;
+    
+     if(i==2){
+      if (!matrice[alea][k][j]) {
+          obj[k][j][i].visible = false;
+      }
     }
-}
-
- // Création des trous à la main.
-  /*if (i == 1) {
-    if (((k>=3) && (k<=6) &&(j>=3)&&(j<=7))){
-       obj[k][j][i].visible = false;
+    if(i==3){
+      if (!matrice[alea][k][j]) {
+          obj[k][j][i].visible = false;
+      }
     }
- }
+       
+    /*
+      if (!matrice[alea][k][j]) {
+        obj[k][j][alea].visible = false;
+      }
+    
+    
+      if (!matrice[alea][k][j]) {
+        obj[k][j][alea].visible = false;
+      }*/
+    
+ 
 
-   if (i==2){
-    if ((((k==4)||(k==5)||(k==7))&&(j==4))|| ((k>5) && (k<=6) &&(j>=2)&&(j<=6))){
-       obj[k][j][i].visible = false;
-    }
- }*/
 
+  obj[k][j][i].prog = shader_program_id;
 
-    obj[k][j][i].prog = shader_program_id;
-
-    obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10-i*7); //avant le z était en -10
+  obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10-i*7); //avant le z était en -10
 
 }
 }
