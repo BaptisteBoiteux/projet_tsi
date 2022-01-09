@@ -17,17 +17,17 @@ camera cam;
 int temps = 0;
 int score = 0;
 int min=0;
-int max =3;
+int max =4;
 int alea; 
 
 const int nb_obj = 13;
-const int nb_mur = 4;
-const int nb_matrice = 4;
+const int nb_mur = 6;
+const int nb_matrice = 5;
 int matrice[nb_matrice][nb_obj][nb_obj];
 
 objet3d obj[nb_obj][nb_obj][nb_mur];
 
-int config[nb_mur];
+int config[nb_mur][nb_obj];
 
 const int nb_obj2 = 6;
 objet3d obj2[nb_obj2];
@@ -116,26 +116,32 @@ init_text(text_to_draw);
 
   //Gestion du score
   text_to_draw[2] = text_to_draw[0];
-  text_to_draw[2].value = "Score :"+ std::to_string(score) + std::to_string(min + rand()%(max+1-min));
+  text_to_draw[2].value = "Score :" + std::to_string(score) + std::to_string((obj2[3].tr.rotation_euler.z)*360/(2*M_PI));
   text_to_draw[2].bottomLeft = vec2(0.5, 0.0);
   text_to_draw[2].topRight = vec2(1, 0.9);
 
-for (int i=0; i<nb_mur-1; i++){
+
+for (int i=0; i<nb_mur; i++){
   for (int j =0; j<nb_obj;j++){
     for (int k =0; k<nb_obj; k++){
-
       if (obj[j][k][i].tr.translation.z > obj2[1].tr.translation.z+0.6  ){
-        obj[j][k][i].tr.translation.z = -33;
+        obj[j][k][i].tr.translation.z = -47;
       }
       
     }
   }
 }
 
-//Teste si le personnage est proche du mur (va permettre d'analyser sa position)
-if (abs(obj[0][0][0].tr.translation.z - obj2[1].tr.translation.z ) < 0.012) {
-    if (abs(((obj2[1].tr.translation.x) / 0.4) - 6) < 0.1){
-        score++;
+
+for (int i = 0; i < nb_mur; i++) {
+    //Teste si le personnage est proche du mur (va permettre d'analyser sa position)
+    if (abs(obj[0][0][i].tr.translation.z - obj2[1].tr.translation.z) < 0.012) {
+        for (int j = 0; j < nb_obj; j++) {
+            //verification au niveau des x (un carré fait 0.4 de longeur et on prend en compte les imprécisions des float)
+            if (abs(((obj2[1].tr.translation.x) / 0.4) - config[i][j]) < 0.1) {
+                score++;
+            }
+        }
     }
 }
 
@@ -160,11 +166,21 @@ static void keyboard_callback(unsigned char key, int, int)
     case 27:
       exit(0);
       break;
-    case 'l':
-      angle_z_model_1 -= M_PI/6;
+    case 'd':
+        if ((abs(angle_z_model_1)* 360) /(2 * M_PI)  > 325){
+            angle_z_model_1 = 0;
+        }
+        else {
+            angle_z_model_1 -= M_PI / 6;
+        }
     break;
-    case 'o':
-      angle_z_model_5 += M_PI/6;
+    case 's':
+        if (((angle_z_model_5) * 360)/(2 * M_PI) > 325) {
+            angle_z_model_5 = 0;
+        }
+        else {
+            angle_z_model_5 += M_PI / 6;
+        }
     break;
   }
   obj2[2].tr.rotation_euler =vec3 (0.0f,0.0f,angle_z_model_1);
@@ -223,9 +239,7 @@ for (int k =0; k<nb_mur; k++){
     }
   }
 }
-if (temps == 600){
-init_model_3();
-}
+
 /*
 
 if (temps == 600){
@@ -491,101 +505,141 @@ void init_model_2()
 
 void init_model_3(){
 
+    //Création des matrices :
+    for (int n = 0; n < nb_matrice; n++) {
+        if (n == 0) {
+            for (int l = 0; l < nb_obj; l++) {
+                for (int m = 0; m < nb_obj; m++) {
+                    if (((l <= 3) && (m >= 3) && (m <= 7)))
+                    {
+                        config[n][m] = m;
+                        matrice[n][l][m] = 0;
+                    }
+                    else {
+                        matrice[n][l][m] = 1;
+                    }
+                }
+            }
+        }
+        if (n == 1) {
+            for (int l = 0; l < nb_obj; l++) {
+                for (int m = 0; m < nb_obj; m++) {
+                    if (((l <= 3) && (m == 8))) {
+                        matrice[n][l][m] = 0;
+                        config[n][m] = m;
+                    }
+                    else {
+                        matrice[n][l][m] = 1;
+                    }
+                }
+            }
+        }
+        if (n == 2) {
+            for (int l = 0; l < nb_obj; l++) {
+                for (int m = 0; m < nb_obj; m++) {
+                    if (((l <= 3) && (m == 5)) || ((l == 2) && (m >= 3) && (m <= 7))) {
+                        matrice[n][l][m] = 0;
+                        config[n][m] = m;
+                    }
+                    else {
+                        matrice[n][l][m] = 1;
+                    }
+                }
+            }
+        }
+        if (n == 3) {
+            for (int l = 0; l < nb_obj; l++) {
+                for (int m = 0; m < nb_obj; m++) {
+                    if (((l <= 3) && (m == 8)) || ((l == 2) && (m >= 6) && (m <= 10))) {
+                        matrice[n][l][m] = 0;
+                        config[n][m] = m;
+                    }
+                    else {
+                        matrice[n][l][m] = 1;
+                    }
+                }
+            }
+        }
+        if (n == 4) {
+            for (int l = 0; l < nb_obj; l++) {
+                for (int m = 0; m < nb_obj; m++) {
+                    if (((l <= 3) && (m == 2))) {
+                        matrice[n][l][m] = 0;
+                        config[n][m] = m;
+                    }
+                    else {
+                        matrice[n][l][m] = 1;
+                    }
+                }
+            }
+        }
+    }
+    srand(time(NULL));
 
-for (int n = 0; n < nb_matrice; n++) {
-if (n == 0) {
-    for (int l = 0; l < nb_obj; l++) {
-        for (int m = 0; m < nb_obj; m++) {
-            if (((l <= 3) && (m >= 3) && (m <= 7)))
-            {
-                matrice[n][l][m] = 0;
-            }
-            else {
-                matrice[n][l][m] = 1;
-            }
-        }
-    }
-}
-if (n == 1) {
-    for (int l = 0; l < nb_obj; l++) {
-        for (int m = 0; m < nb_obj; m++) {
-            if (((l <= 3) && (m == 5))){
-                matrice[n][l][m] = 0;
-            }
-            else {
-                matrice[n][l][m] = 1;
-            }
-        }
-    }
-}
-if (n == 2) {
-    for (int l = 0; l < nb_obj; l++) {
-        for (int m = 0; m < nb_obj; m++) {
-            if (((l <= 3) && (m == 5)) || ((l == 2) && (m >=3) && (m <= 7))) {
-                matrice[n][l][m] = 0;
-            }
-            else {
-                matrice[n][l][m] = 1;
-            }
-        }
-    }
-}
-}
-srand(time(NULL));
-for (int i=0; i<nb_mur; i++){  
-  alea = min + rand()%(max+1-min);
+for (int i=0; i<nb_mur; i++){
+  alea = min + rand() % (max + 1 - min);
   for (int k = 0; k<nb_obj; k++){
     for(int j = 0; j<nb_obj; j++){
-    // Chargement d'un maillage a partir d'un fichier
-    mesh m = load_obj_file("data/cube.obj");
+      // Chargement d'un maillage a partir d'un fichier
+      mesh m = load_obj_file("data/cube.obj");
 
-    // Affecte une transformation sur les sommets du maillage
-    float s = 0.2f;
-    mat4 transform = mat4(   s, 0.0f, 0.0f, 0.0f,
-        0.0f,    s, 0.0f, 0.0f,
-        0.0f, 0.0f,   s , 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0f);
-    apply_deformation(&m,transform);
-   
-    // Centre la rotation du modele 1 autour de son centre de gravite approximatif
-    obj[k][j][i].tr.rotation_center = vec3(0.0f,0.0f,0.0f);
-
-    update_normals(&m);
-    fill_color(&m,vec3(1.0f,1.0f,1.0f));
-
-    obj[k][j][i].vao = upload_mesh_to_gpu(m);
-
-   obj[k][j][i].visible = true;
-
- obj[k][j][i].nb_triangle = m.connectivity.size();
+      // Affecte une transformation sur les sommets du maillage
+      float s = 0.2f;
+      mat4 transform = mat4(   s, 0.0f, 0.0f, 0.0f,
+          0.0f,    s, 0.0f, 0.0f,
+          0.0f, 0.0f,   s , 0.0f,
+          0.0f, 0.0f, 0.0f, 1.0f);
+      apply_deformation(&m,transform);
     
-   
-  obj[k][j][i].texture_id = glhelper::load_texture("data/grass.tga");CHECK_GL_ERROR();
+      // Centre la rotation du modele 1 autour de son centre de gravite approximatif
+      obj[k][j][i].tr.rotation_center = vec3(0.0f,0.0f,0.0f);
 
+      update_normals(&m);
+      fill_color(&m,vec3(1.0f,1.0f,1.0f));
 
-   
-    if(i==0){
-      if (!matrice[alea][k][j]) {
-          obj[k][j][i].visible = false;
-      }
-    }
+      obj[k][j][i].vao = upload_mesh_to_gpu(m);
 
-     if(i==1){
-      if (!matrice[alea][k][j]) {
-          obj[k][j][i].visible = false;
-      }
-    }
+      obj[k][j][i].visible = true;
+
+      obj[k][j][i].nb_triangle = m.connectivity.size();
+      
     
-     if(i==2){
-      if (!matrice[alea][k][j]) {
-          obj[k][j][i].visible = false;
+      obj[k][j][i].texture_id = glhelper::load_texture("data/grass.tga");CHECK_GL_ERROR();
+
+
+    
+      if(i==0){
+        if (!matrice[alea][k][j]) {
+            obj[k][j][i].visible = false;
+        }
       }
-    }
-    if(i==3){
-      if (!matrice[alea][k][j]) {
-          obj[k][j][i].visible = false;
+
+      if(i==1){
+        if (!matrice[alea][k][j]) {
+            obj[k][j][i].visible = false;
+        }
       }
-    }
+      
+      if(i==2){
+        if (!matrice[alea][k][j]) {
+            obj[k][j][i].visible = false;
+        }
+      }
+      if(i==3){
+        if (!matrice[alea][k][j]) {
+            obj[k][j][i].visible = false;
+        }
+      }
+      if(i==4){
+        if (!matrice[alea][k][j]) {
+            obj[k][j][i].visible = false;
+        }
+      }
+      if(i==5){
+        if (!matrice[alea][k][j]) {
+            obj[k][j][i].visible = false;
+        }
+      }
        
     /*
       if (!matrice[alea][k][j]) {
@@ -600,12 +654,12 @@ for (int i=0; i<nb_mur; i++){
  
 
 
-  obj[k][j][i].prog = shader_program_id;
+      obj[k][j][i].prog = shader_program_id;
 
-  obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10-i*7); //avant le z était en -10
+      obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10-i*7); //avant le z était en -10
 
-}
-}
+    }
+  } 
 }
 }
 
