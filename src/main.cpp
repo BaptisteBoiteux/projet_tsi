@@ -8,6 +8,7 @@
 #include "declaration.h"
 #include <sys/random.h>
 #include <stdlib.h>
+#include <math.h>
 //#include <unistd.h>
 //identifiant des shaders
 GLuint shader_program_id;
@@ -116,7 +117,7 @@ init_text(text_to_draw);
 
   //Gestion du score
   text_to_draw[2] = text_to_draw[0];
-  text_to_draw[2].value = "Score :" + std::to_string(score) + std::to_string((obj2[3].tr.rotation_euler.z)*360/(2*M_PI));
+  text_to_draw[2].value = "Score :" + std::to_string(score) + std::to_string(obj[1][(int)(floor(obj2[1].tr.translation.x/0.4))][0].tr.translation.x);
   text_to_draw[2].bottomLeft = vec2(0.5, 0.0);
   text_to_draw[2].topRight = vec2(1, 0.9);
 
@@ -134,13 +135,22 @@ for (int i=0; i<nb_mur; i++){
 
 
 for (int i = 0; i < nb_mur; i++) {
-    //Teste si le personnage est proche du mur (va permettre d'analyser sa position)
-    if (abs(obj[0][0][i].tr.translation.z - obj2[1].tr.translation.z) < 0.012) {
-        for (int j = 0; j < nb_obj; j++) {
-            //verification au niveau des x (un carré fait 0.4 de longeur et on prend en compte les imprécisions des float)
-            if (abs(((obj2[1].tr.translation.x) / 0.4) - config[i][j]) < 0.1) {
-                score++;
-            }
+  if (abs(obj[0][0][i].tr.translation.z - obj2[1].tr.translation.z) < 0.012) {
+    for (int k = 0; k < nb_obj; k++) {
+            for (int j=0; j<nb_obj;j++){
+              //Teste si le personnage est proche du mur (va permettre d'analyser sa position)
+              
+        
+              //verification au niveau des x (un carré fait 0.4 de longeur et on prend en compte les imprécisions des float)
+              if (obj2[1].tr.translation.x - obj[k][(int)(floor(obj2[1].tr.translation.x/0.4))][i].tr.translation.x == obj2[1].tr.translation.x ) {
+                  score++;
+              }
+
+              else{
+                obj2[1].tr.translation.x =0;
+                score = 0;
+              }
+          }
         }
     }
 }
@@ -235,7 +245,7 @@ static void timer_callback(int)
 for (int k =0; k<nb_mur; k++){
   for(int i = 0; i < nb_obj; ++i){
     for(int j = 0; j < nb_obj; ++j){
-      obj[i][j][k].tr.translation.z+=0.04;
+      obj[i][j][k].tr.translation.z+=0.02;
     }
   }
 }
@@ -580,6 +590,7 @@ for (int i=0; i<nb_mur; i++){
   alea = min + rand() % (max + 1 - min);
   for (int k = 0; k<nb_obj; k++){
     for(int j = 0; j<nb_obj; j++){
+      /*
       // Chargement d'un maillage a partir d'un fichier
       mesh m = load_obj_file("data/cube.obj");
 
@@ -604,40 +615,204 @@ for (int i=0; i<nb_mur; i++){
       obj[k][j][i].nb_triangle = m.connectivity.size();
       
     
-      obj[k][j][i].texture_id = glhelper::load_texture("data/grass.tga");CHECK_GL_ERROR();
+      obj[k][j][i].texture_id = glhelper::load_texture("data/grass.tga");CHECK_GL_ERROR();*/
 
 
     
       if(i==0){
-        if (!matrice[alea][k][j]) {
-            obj[k][j][i].visible = false;
+        if (matrice[alea][k][j]) {
+            
+            // Chargement d'un maillage a partir d'un fichier
+            mesh m = load_obj_file("data/cube.obj");
+
+            // Affecte une transformation sur les sommets du maillage
+            float s = 0.2f;
+            mat4 transform = mat4(   s, 0.0f, 0.0f, 0.0f,
+                0.0f,    s, 0.0f, 0.0f,
+                0.0f, 0.0f,   s , 0.0f,
+                0.0f, 0.0f, 0.0f, 1.0f);
+            apply_deformation(&m,transform);
+          
+            // Centre la rotation du modele 1 autour de son centre de gravite approximatif
+            obj[k][j][i].tr.rotation_center = vec3(0.0f,0.0f,0.0f);
+
+            update_normals(&m);
+            fill_color(&m,vec3(34.51f,16.08,1.0f));
+
+            obj[k][j][i].vao = upload_mesh_to_gpu(m);
+
+            obj[k][j][i].visible = true;
+
+            obj[k][j][i].nb_triangle = m.connectivity.size();
+            
+          
+            //obj[k][j][i].texture_id = glhelper::load_texture("data/mur2.tga");CHECK_GL_ERROR();
+            obj[k][j][i].prog = shader_program_id;
+            obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10-i*7); //avant le z était en -10
+
+      
         }
       }
 
       if(i==1){
-        if (!matrice[alea][k][j]) {
-            obj[k][j][i].visible = false;
+        if (matrice[alea][k][j]) {
+            // Chargement d'un maillage a partir d'un fichier
+            mesh m = load_obj_file("data/cube.obj");
+
+            // Affecte une transformation sur les sommets du maillage
+            float s = 0.2f;
+            mat4 transform = mat4(   s, 0.0f, 0.0f, 0.0f,
+                0.0f,    s, 0.0f, 0.0f,
+                0.0f, 0.0f,   s , 0.0f,
+                0.0f, 0.0f, 0.0f, 1.0f);
+            apply_deformation(&m,transform);
+          
+            // Centre la rotation du modele 1 autour de son centre de gravite approximatif
+            obj[k][j][i].tr.rotation_center = vec3(0.0f,0.0f,0.0f);
+
+            update_normals(&m);
+            fill_color(&m,vec3(1.0f,1.0f,1.0f));
+
+            obj[k][j][i].vao = upload_mesh_to_gpu(m);
+
+            obj[k][j][i].visible = true;
+
+            obj[k][j][i].nb_triangle = m.connectivity.size();
+            
+          
+            obj[k][j][i].texture_id = glhelper::load_texture("data/mur2.tga");CHECK_GL_ERROR();
+            obj[k][j][i].prog = shader_program_id;
+            obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10-i*7); //avant le z était en -10
+
         }
       }
       
       if(i==2){
-        if (!matrice[alea][k][j]) {
-            obj[k][j][i].visible = false;
+        if (matrice[alea][k][j]) {
+            // Chargement d'un maillage a partir d'un fichier
+            mesh m = load_obj_file("data/cube.obj");
+
+            // Affecte une transformation sur les sommets du maillage
+            float s = 0.2f;
+            mat4 transform = mat4(   s, 0.0f, 0.0f, 0.0f,
+                0.0f,    s, 0.0f, 0.0f,
+                0.0f, 0.0f,   s , 0.0f,
+                0.0f, 0.0f, 0.0f, 1.0f);
+            apply_deformation(&m,transform);
+          
+            // Centre la rotation du modele 1 autour de son centre de gravite approximatif
+            obj[k][j][i].tr.rotation_center = vec3(0.0f,0.0f,0.0f);
+
+            update_normals(&m);
+            fill_color(&m,vec3(1.0f,1.0f,1.0f));
+
+            obj[k][j][i].vao = upload_mesh_to_gpu(m);
+
+            obj[k][j][i].visible = true;
+
+            obj[k][j][i].nb_triangle = m.connectivity.size();
+            
+          
+            obj[k][j][i].texture_id = glhelper::load_texture("data/mur2.tga");CHECK_GL_ERROR();
+            obj[k][j][i].prog = shader_program_id;
+            obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10-i*7); //avant le z était en -10
+
         }
       }
       if(i==3){
-        if (!matrice[alea][k][j]) {
-            obj[k][j][i].visible = false;
+        if (matrice[alea][k][j]) {
+            // Chargement d'un maillage a partir d'un fichier
+            mesh m = load_obj_file("data/cube.obj");
+
+            // Affecte une transformation sur les sommets du maillage
+            float s = 0.2f;
+            mat4 transform = mat4(   s, 0.0f, 0.0f, 0.0f,
+                0.0f,    s, 0.0f, 0.0f,
+                0.0f, 0.0f,   s , 0.0f,
+                0.0f, 0.0f, 0.0f, 1.0f);
+            apply_deformation(&m,transform);
+          
+            // Centre la rotation du modele 1 autour de son centre de gravite approximatif
+            obj[k][j][i].tr.rotation_center = vec3(0.0f,0.0f,0.0f);
+
+            update_normals(&m);
+            fill_color(&m,vec3(1.0f,1.0f,1.0f));
+
+            obj[k][j][i].vao = upload_mesh_to_gpu(m);
+
+            obj[k][j][i].visible = true;
+
+            obj[k][j][i].nb_triangle = m.connectivity.size();
+            
+          
+            obj[k][j][i].texture_id = glhelper::load_texture("data/mur2.tga");CHECK_GL_ERROR();
+            obj[k][j][i].prog = shader_program_id;
+            obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10-i*7); //avant le z était en -10
+
         }
       }
       if(i==4){
-        if (!matrice[alea][k][j]) {
-            obj[k][j][i].visible = false;
+        if (matrice[alea][k][j]) {
+            // Chargement d'un maillage a partir d'un fichier
+            mesh m = load_obj_file("data/cube.obj");
+
+            // Affecte une transformation sur les sommets du maillage
+            float s = 0.2f;
+            mat4 transform = mat4(   s, 0.0f, 0.0f, 0.0f,
+                0.0f,    s, 0.0f, 0.0f,
+                0.0f, 0.0f,   s , 0.0f,
+                0.0f, 0.0f, 0.0f, 1.0f);
+            apply_deformation(&m,transform);
+          
+            // Centre la rotation du modele 1 autour de son centre de gravite approximatif
+            obj[k][j][i].tr.rotation_center = vec3(0.0f,0.0f,0.0f);
+
+            update_normals(&m);
+            fill_color(&m,vec3(1.0f,1.0f,1.0f));
+
+            obj[k][j][i].vao = upload_mesh_to_gpu(m);
+
+            obj[k][j][i].visible = true;
+
+            obj[k][j][i].nb_triangle = m.connectivity.size();
+            
+          
+            obj[k][j][i].texture_id = glhelper::load_texture("data/mur2.tga");CHECK_GL_ERROR();
+            obj[k][j][i].prog = shader_program_id;
+            obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10-i*7); //avant le z était en -10
+
         }
       }
       if(i==5){
-        if (!matrice[alea][k][j]) {
-            obj[k][j][i].visible = false;
+        if (matrice[alea][k][j]) {
+            // Chargement d'un maillage a partir d'un fichier
+            mesh m = load_obj_file("data/cube.obj");
+
+            // Affecte une transformation sur les sommets du maillage
+            float s = 0.2f;
+            mat4 transform = mat4(   s, 0.0f, 0.0f, 0.0f,
+                0.0f,    s, 0.0f, 0.0f,
+                0.0f, 0.0f,   s , 0.0f,
+                0.0f, 0.0f, 0.0f, 1.0f);
+            apply_deformation(&m,transform);
+          
+            // Centre la rotation du modele 1 autour de son centre de gravite approximatif
+            obj[k][j][i].tr.rotation_center = vec3(0.0f,0.0f,0.0f);
+
+            update_normals(&m);
+            fill_color(&m,vec3(1.0f,1.0f,1.0f));
+
+            obj[k][j][i].vao = upload_mesh_to_gpu(m);
+
+            obj[k][j][i].visible = true;
+
+            obj[k][j][i].nb_triangle = m.connectivity.size();
+            
+          
+            obj[k][j][i].texture_id = glhelper::load_texture("data/mur2.tga");CHECK_GL_ERROR();
+            obj[k][j][i].prog = shader_program_id;
+            obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10-i*7); //avant le z était en -10
+
         }
       }
        
@@ -651,12 +826,9 @@ for (int i=0; i<nb_mur; i++){
         obj[k][j][alea].visible = false;
       }*/
     
- 
 
 
-      obj[k][j][i].prog = shader_program_id;
 
-      obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10-i*7); //avant le z était en -10
 
     }
   } 
