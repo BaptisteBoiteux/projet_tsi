@@ -25,6 +25,7 @@ const int nb_obj = 13;
 const int nb_mur = 6;
 const int nb_matrice = 5;
 int matrice[nb_matrice][nb_obj][nb_obj];
+int angle[nb_matrice][11];
 
 objet3d obj[nb_obj][nb_obj][nb_mur];
 
@@ -67,7 +68,7 @@ static void init()
 
   gui_program_id = glhelper::create_program_from_file("shaders/gui.vert", "shaders/gui.frag"); CHECK_GL_ERROR();
 
-text_to_draw[0].value = "Le Best Binome";
+text_to_draw[0].value = " ";
 text_to_draw[0].bottomLeft = vec2(-0.2, 0.5);
 text_to_draw[0].topRight = vec2(0.2, 1);
 
@@ -117,7 +118,7 @@ init_text(text_to_draw);
 
   //Gestion du score
   text_to_draw[2] = text_to_draw[0];
-  text_to_draw[2].value = "Score :" + std::to_string(score) + std::to_string(obj2[1].tr.translation.x/0.4);
+  text_to_draw[2].value = "Score :" + std::to_string(score);
   text_to_draw[2].bottomLeft = vec2(0.5, 0.0);
   text_to_draw[2].topRight = vec2(1, 0.9);
 
@@ -512,14 +513,12 @@ void init_model_2()
 
 
 void init_model_3(){
-
     //Création des matrices :
     for (int n = 0; n < nb_matrice; n++) {
         if (n == 0) {
             for (int l = 0; l < nb_obj; l++) {
                 for (int m = 0; m < nb_obj; m++) {
-                    if (((l <= 3) && (m >= 3) && (m <= 7)))
-                    {
+                    if (((l <= 3) && (m >= 3) && (m <= 7))){
                         config[n][m] = m;
                         matrice[n][l][m] = 0;
                     }
@@ -528,6 +527,10 @@ void init_model_3(){
                     }
                 }
             }
+            /*for (int o = 0; o < nb_obj; o++) {
+                angle[n][o]=o*M_PI/6
+            }*/
+
         }
         if (n == 1) {
             for (int l = 0; l < nb_obj; l++) {
