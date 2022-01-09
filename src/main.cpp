@@ -6,7 +6,7 @@
  \*****************************************************************************/
 
 #include "declaration.h"
-#include <sys/random.h>
+//#include <sys/random.h>
 #include <stdlib.h>
 #include <math.h>
 //#include <unistd.h>
@@ -117,7 +117,7 @@ init_text(text_to_draw);
 
   //Gestion du score
   text_to_draw[2] = text_to_draw[0];
-  text_to_draw[2].value = "Score :" + std::to_string(score) + std::to_string(obj[1][(int)(floor(obj2[1].tr.translation.x/0.4))][0].tr.translation.x);
+  text_to_draw[2].value = "Score :" + std::to_string(score) + std::to_string(obj2[1].tr.translation.x/0.4);
   text_to_draw[2].bottomLeft = vec2(0.5, 0.0);
   text_to_draw[2].topRight = vec2(1, 0.9);
 
@@ -125,7 +125,7 @@ init_text(text_to_draw);
 for (int i=0; i<nb_mur; i++){
   for (int j =0; j<nb_obj;j++){
     for (int k =0; k<nb_obj; k++){
-      if (obj[j][k][i].tr.translation.z > obj2[1].tr.translation.z+0.6  ){
+      if (obj[j][k][i].tr.translation.z > obj2[1].tr.translation.z+0.6){
         obj[j][k][i].tr.translation.z = -47;
       }
       
@@ -133,27 +133,23 @@ for (int i=0; i<nb_mur; i++){
   }
 }
 
-/*
+
 for (int i = 0; i < nb_mur; i++) {
+    // Teste si le personnage est proche du mur(va permettre d'analyser sa position)
   if (abs(obj[0][0][i].tr.translation.z - obj2[1].tr.translation.z) < 0.012) {
     for (int k = 0; k < nb_obj; k++) {
-            for (int j=0; j<nb_obj;j++){
-              //Teste si le personnage est proche du mur (va permettre d'analyser sa position)
-              
-        
               //verification au niveau des x (un carré fait 0.4 de longeur et on prend en compte les imprécisions des float)
               if (obj2[1].tr.translation.x - obj[k][(int)(floor(obj2[1].tr.translation.x/0.4))][i].tr.translation.x == obj2[1].tr.translation.x ) {
                   score++;
               }
-
+              /*
               else{
                 obj2[1].tr.translation.x =0;
                 score = 0;
-              }
-          }
+              }*/
         }
     }
-}*/
+}
 
 
 
@@ -648,7 +644,7 @@ for (int i=0; i<nb_mur; i++){
           
             //obj[k][j][i].texture_id = glhelper::load_texture("data/mur2.tga");CHECK_GL_ERROR();
             obj[k][j][i].prog = shader_program_id;
-            obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10-i*7); //avant le z était en -10
+            obj[k][j][i].tr.translation = vec3(0.0 + 0.4 * j, 0.0 + 0.4 * k, -10 - i * 7);
 
       
         }
@@ -680,7 +676,7 @@ for (int i=0; i<nb_mur; i++){
             obj[k][j][i].nb_triangle = m.connectivity.size();
             
           
-            obj[k][j][i].texture_id = glhelper::load_texture("data/mur2.tga");CHECK_GL_ERROR();
+            //obj[k][j][i].texture_id = glhelper::load_texture("data/mur2.tga");CHECK_GL_ERROR();
             obj[k][j][i].prog = shader_program_id;
             obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10-i*7); //avant le z était en -10
 
@@ -713,7 +709,7 @@ for (int i=0; i<nb_mur; i++){
             obj[k][j][i].nb_triangle = m.connectivity.size();
             
           
-            obj[k][j][i].texture_id = glhelper::load_texture("data/mur2.tga");CHECK_GL_ERROR();
+            //obj[k][j][i].texture_id = glhelper::load_texture("data/mur2.tga");CHECK_GL_ERROR();
             obj[k][j][i].prog = shader_program_id;
             obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10-i*7); //avant le z était en -10
 
@@ -745,7 +741,7 @@ for (int i=0; i<nb_mur; i++){
             obj[k][j][i].nb_triangle = m.connectivity.size();
             
           
-            obj[k][j][i].texture_id = glhelper::load_texture("data/mur2.tga");CHECK_GL_ERROR();
+            //obj[k][j][i].texture_id = glhelper::load_texture("data/mur2.tga");CHECK_GL_ERROR();
             obj[k][j][i].prog = shader_program_id;
             obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10-i*7); //avant le z était en -10
 
@@ -777,7 +773,7 @@ for (int i=0; i<nb_mur; i++){
             obj[k][j][i].nb_triangle = m.connectivity.size();
             
           
-            obj[k][j][i].texture_id = glhelper::load_texture("data/mur2.tga");CHECK_GL_ERROR();
+            //obj[k][j][i].texture_id = glhelper::load_texture("data/mur2.tga");CHECK_GL_ERROR();
             obj[k][j][i].prog = shader_program_id;
             obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10-i*7); //avant le z était en -10
 
@@ -809,7 +805,7 @@ for (int i=0; i<nb_mur; i++){
             obj[k][j][i].nb_triangle = m.connectivity.size();
             
           
-            obj[k][j][i].texture_id = glhelper::load_texture("data/mur2.tga");CHECK_GL_ERROR();
+            //obj[k][j][i].texture_id = glhelper::load_texture("data/mur2.tga");CHECK_GL_ERROR();
             obj[k][j][i].prog = shader_program_id;
             obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10-i*7); //avant le z était en -10
 
