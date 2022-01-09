@@ -6,10 +6,9 @@
  \*****************************************************************************/
 
 #include "declaration.h"
-//#include <sys/random.h>
 #include <stdlib.h>
 #include <math.h>
-//#include <unistd.h>
+
 //identifiant des shaders
 GLuint shader_program_id;
 GLuint gui_program_id;
@@ -51,18 +50,12 @@ static void init()
 
   cam.projection = matrice_projection(60.0f*M_PI/180.0f,1.0f,0.01f,100.0f);
 
-   
-  //cam.tr.translation = vec3(0.0f, 1.0f, 0.0f);
-
-  //cam.tr.rotation_center = vec3(3.0f, 6.0f, 0.0f);
-
-   //cam.tr.rotation_euler = vec3(0.0f, M_PI/2., 0.0f);
 
   init_model_2();
   init_model_3();
   init_model_4();
   init_model_5();
-  //init_model_6();
+
   cam.tr.translation = obj2[1].tr.translation +vec3(0.0f, 2.0f, 4.0f) ;
   cam.tr.rotation_euler = vec3(M_PI/12,0.0f,0.0f);
 
@@ -98,7 +91,7 @@ init_text(text_to_draw);
         for(int i = 0; i < nb_obj; ++i){
             for(int j = 0; j < nb_obj; ++j){
 
-            draw_obj3d(&obj[i][j][k] , cam);
+              draw_obj3d(&obj[i][j][k] , cam);
    
             }
         }
@@ -118,7 +111,7 @@ init_text(text_to_draw);
 
   //Gestion du score
   text_to_draw[2] = text_to_draw[0];
-  text_to_draw[2].value = "Score :" + std::to_string(score)+ std::to_string(obj[2][ (int) (floor(obj2[1].tr.translation.x/0.4+0.1)) ][1].tr.translation.x); //+ std::to_string((obj2[1].tr.translation.x+0.4)/0.4);
+  text_to_draw[2].value = "Score :" + std::to_string(score);
   text_to_draw[2].bottomLeft = vec2(0.5, 0.0);
   text_to_draw[2].topRight = vec2(1, 0.9);
 
@@ -127,7 +120,7 @@ for (int i=0; i<nb_mur; i++){
   for (int j =0; j<nb_obj;j++){
     for (int k =0; k<nb_obj; k++){
       if (obj[j][k][i].tr.translation.z > obj2[1].tr.translation.z){
-        obj[j][k][i].tr.translation.z = -47;
+        obj[j][k][i].tr.translation.z = -7*nb_mur -5;
       }
       
     }
@@ -139,27 +132,33 @@ for (int i = 0; i < nb_mur; i++) {
     // Teste si le personnage est proche du mur(va permettre d'analyser sa position)
   if (abs(obj[0][0][i].tr.translation.z - obj2[1].tr.translation.z) < 0.02) {
     for (int k = 0; k < nb_obj; k++) {
-      //if ( (obj2[1].tr.translation.x/0.4)== ){
-              //verification au niveau des x (un carré fait 0.4 de longeur et on prend en compte les imprécisions des float)
-              // décalage de plus 0.1 dans la matrice pour avoir les bonnes coordonnées .
-              if  ( abs (obj2[1].tr.translation.x - obj[k][ (int) (floor(obj2[1].tr.translation.x/0.4+0.1)) ][i].tr.translation.x -obj2[1].tr.translation.x) <= 0.1){
-                  score++;
-                  a = 1;
-              }
-     // }
-             //(abs ( obj2[1].tr.translation.x+0.4 - obj[k][ (int) (floor ((obj2[1].tr.translation.x+0.4)/0.4)) ][i].tr.translation.x -obj2[1].tr.translation.x+0.4)<=0.1)) 
-              
+      for(int j =0; j<nb_obj;j++){
+        //verification au niveau des x (un carré fait 0.4 de longeur et on prend en compte les imprécisions des float)
+        // décalage de plus 0.1 dans la matrice pour avoir les bonnes coordonnées .
+        if ((int) (floor(obj2[1].tr.translation.x/0.4))<=4){
+          if   ( abs (obj2[1].tr.translation.x - obj[k][ (int) (floor(obj2[1].tr.translation.x/0.4)) ][i].tr.translation.x -obj2[1].tr.translation.x) <= 0.1) {                      //&& ( abs (obj2[1].tr.translation.x+0.4 - obj[k][ (int) (floor((obj2[1].tr.translation.x+0.4)/0.4)) ][i].tr.translation.x -(obj2[1].tr.translation.x+0.4)) <= 0.3)){
+              score++;
+              a = 1;
+          }
         }
-        if (a==0){
-                obj2[1].tr.translation = vec3(2.2f , 0.6f, -5.0);
-                obj2[2].tr.translation = vec3(2.6f , 1.4f, -5.0);
-                obj2[3].tr.translation = vec3(1.8f , 1.4f, -5.0);
-                cam.tr.translation = obj2[1].tr.translation   +vec3(0.0f, 2.0f, 4.0f);
+        if ((int) (floor(obj2[1].tr.translation.x/0.4))>4){
+          if   ( abs (obj2[1].tr.translation.x - obj[k][ (int) (floor(obj2[1].tr.translation.x/0.4+0.1)) ][i].tr.translation.x -obj2[1].tr.translation.x) <= 0.1){                  //&& ( abs (obj2[1].tr.translation.x+0.4 - obj[k][ (int) (floor((obj2[1].tr.translation.x+0.4)/0.4+0.1)) ][i].tr.translation.x -(obj2[1].tr.translation.x+0.4)) <= 0.1) ){
+              score++;
+              a = 1;
+          }
+        }
 
-                score =0;
-                
-              }
+      }
     }
+    if (a==0){
+      obj2[1].tr.translation = vec3(2.2f , 0.6f, -5.0);
+      obj2[2].tr.translation = vec3(2.6f , 1.4f, -5.0);
+      obj2[3].tr.translation = vec3(1.8f , 1.4f, -5.0);
+      cam.tr.translation = obj2[1].tr.translation   +vec3(0.0f, 2.0f, 4.0f);
+
+      score =0;
+    }
+  }
 }
 
 
@@ -212,34 +211,22 @@ static void special_callback(int key, int, int)
   float dL=0.04f;
   switch (key)
   {
-    case GLUT_KEY_UP:
-      obj2[1].tr.translation.y += dL; //rotation avec la touche du haut
-      obj2[2].tr.translation.y += dL;
-      obj2[3].tr.translation.y += dL;
-
+    case GLUT_KEY_LEFT:  //translation avec la flèche gauche directionnelle
+      if(obj2[1].tr.translation.x >0){
+        obj2[1].tr.translation.x -= dL; 
+        obj2[2].tr.translation.x -= dL;
+        obj2[3].tr.translation.x -= dL;
+      }
       break;
-    case GLUT_KEY_DOWN:
-      obj2[1].tr.translation.y -= dL; //rotation avec la touche du bas
-      obj2[2].tr.translation.y -= dL;
-      obj2[3].tr.translation.y -= dL;
-
-      break;
-    case GLUT_KEY_LEFT:
-    if(obj2[1].tr.translation.x >0){
-      obj2[1].tr.translation.x -= dL; //rotation avec la touche de gauche
-      obj2[2].tr.translation.x -= dL;
-      obj2[3].tr.translation.x -= dL;
-    }
-      break;
-    case GLUT_KEY_RIGHT:
+    case GLUT_KEY_RIGHT:  //translation avec la flèche gauche directionnelle
       if(obj2[2].tr.translation.x < 0.4*nb_obj){
-      obj2[1].tr.translation.x += dL; //rotation avec la touche de droite
-      obj2[2].tr.translation.x += dL;
-      obj2[3].tr.translation.x += dL;
+        obj2[1].tr.translation.x += dL; 
+        obj2[2].tr.translation.x += dL;
+        obj2[3].tr.translation.x += dL;
       }
       break;
   }
-    //déplacement de la caméra en même temps que le mouvement du personnage
+  //déplacement de la caméra en même temps que le mouvement du personnage
   cam.tr.translation = obj2[1].tr.translation   +vec3(0.0f, 2.0f, 4.0f);
   cam.tr.rotation_euler = vec3(M_PI/12,0.0f,0.0f);
 }
@@ -258,62 +245,14 @@ for (int k =0; k<nb_mur; k++){
     }
   }
 }
-
-/*
-
-if (temps == 600){
-  for (int i=0; i<nb_mur; i++){  
-    for (int k = 0; k<nb_obj; k++){
-      for(int j = 0; j<nb_obj; j++){
-        obj[k][j][i].visible = true;
-      }}}
-}
-
-if (temps == 1000){
-  for (int i=0; i<nb_mur; i++){  
-    for (int k = 0; k<nb_obj; k++){
-      for(int j = 0; j<nb_obj; j++){
-        
-
-        
-
-        if (i==0){
-          if (!matrice[i][k][j]) {
-            obj[k][j][i].visible = false;
-          }
-        }
-        if (i == 1) {
-          if (!matrice[i][k][j]) {
-            obj[k][j][i].visible = false;
-          }
-        }
-        if (i == 2) {
-          if (!matrice[i][k][j]) {
-            obj[k][j][i].visible = false;
-          }
-        }
-
-    obj[k][j][i].prog = shader_program_id;
-    obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10.0-i*7);
-
-    }
-  }
-}
-}
-*/
-    
-
-  glutTimerFunc(25, timer_callback, 0);
-  glutPostRedisplay();
+glutTimerFunc(25, timer_callback, 0);
+glutPostRedisplay();
 }
 
 /*****************************************************************************\
 * main                                                                         *
-\***************************************  sleep(2);
-\***************************************  sleep(2);
+\*************************************** *********************************/
 
-
-  init_model_3();**************************************/
 int main(int argc, char** argv)
 {
   glutInit(&argc, argv);
@@ -523,113 +462,85 @@ void init_model_2()
 
 
 void init_model_3(){
-    //Création des matrices :
-    for (int n = 0; n < nb_matrice; n++) {
-        if (n == 0) {
-            for (int l = 0; l < nb_obj; l++) {
-                for (int m = 0; m < nb_obj; m++) {
-                    if (((l <= 3) && (m >= 3) && (m <= 7))){
-                        config[n][m] = m;
-                        matrice[n][l][m] = 0;
-                    }
-                    else {
-                        matrice[n][l][m] = 1;
-                    }
+//Création des matrices :
+for (int n = 0; n < nb_matrice; n++) {
+    if (n == 0) {
+        for (int l = 0; l < nb_obj; l++) {
+            for (int m = 0; m < nb_obj; m++) {
+                if (((l <= 3) && (m >= 3) && (m <= 7))){
+                    config[n][m] = m;
+                    matrice[n][l][m] = 0;
+                }
+                else {
+                    matrice[n][l][m] = 1;
                 }
             }
-            /*for (int o = 0; o < nb_obj; o++) {
-                angle[n][o]=o*M_PI/6
-            }*/
+        }
+        /*for (int o = 0; o < nb_obj; o++) {
+            angle[n][o]=o*M_PI/6
+        }*/
 
-        }
-        if (n == 1) {
-            for (int l = 0; l < nb_obj; l++) {
-                for (int m = 0; m < nb_obj; m++) {
-                    if (((l <= 3) && (m == 8))) {
-                        matrice[n][l][m] = 0;
-                        config[n][m] = m;
-                    }
-                    else {
-                        matrice[n][l][m] = 1;
-                    }
+    }
+    if (n == 1) {
+        for (int l = 0; l < nb_obj; l++) {
+            for (int m = 0; m < nb_obj; m++) {
+                if (((l <= 3) && (m == 8))) {
+                    matrice[n][l][m] = 0;
+                    config[n][m] = m;
                 }
-            }
-        }
-        if (n == 2) {
-            for (int l = 0; l < nb_obj; l++) {
-                for (int m = 0; m < nb_obj; m++) {
-                    if (((l <= 3) && (m == 5)) || ((l == 2) && (m >= 3) && (m <= 7))) {
-                        matrice[n][l][m] = 0;
-                        config[n][m] = m;
-                    }
-                    else {
-                        matrice[n][l][m] = 1;
-                    }
-                }
-            }
-        }
-        if (n == 3) {
-            for (int l = 0; l < nb_obj; l++) {
-                for (int m = 0; m < nb_obj; m++) {
-                    if (((l <= 3) && (m == 8)) || ((l == 2) && (m >= 6) && (m <= 10))) {
-                        matrice[n][l][m] = 0;
-                        config[n][m] = m;
-                    }
-                    else {
-                        matrice[n][l][m] = 1;
-                    }
-                }
-            }
-        }
-        if (n == 4) {
-            for (int l = 0; l < nb_obj; l++) {
-                for (int m = 0; m < nb_obj; m++) {
-                    if (((l <= 3) && (m == 2))) {
-                        matrice[n][l][m] = 0;
-                        config[n][m] = m;
-                    }
-                    else {
-                        matrice[n][l][m] = 1;
-                    }
+                else {
+                    matrice[n][l][m] = 1;
                 }
             }
         }
     }
-    srand(time(NULL));
+    if (n == 2) {
+        for (int l = 0; l < nb_obj; l++) {
+            for (int m = 0; m < nb_obj; m++) {
+                if (((l <= 3) && (m == 5)) || ((l == 2) && (m >= 3) && (m <= 7))) {
+                    matrice[n][l][m] = 0;
+                    config[n][m] = m;
+                }
+                else {
+                    matrice[n][l][m] = 1;
+                }
+            }
+        }
+    }
+    if (n == 3) {
+        for (int l = 0; l < nb_obj; l++) {
+            for (int m = 0; m < nb_obj; m++) {
+                if (((l <= 3) && (m == 8)) || ((l == 2) && (m >= 6) && (m <= 10))) {
+                    matrice[n][l][m] = 0;
+                    config[n][m] = m;
+                }
+                else {
+                    matrice[n][l][m] = 1;
+                }
+            }
+        }
+    }
+    if (n == 4) {
+        for (int l = 0; l < nb_obj; l++) {
+            for (int m = 0; m < nb_obj; m++) {
+                if (((l <= 3) && (m == 2))) {
+                    matrice[n][l][m] = 0;
+                    config[n][m] = m;
+                }
+                else {
+                    matrice[n][l][m] = 1;
+                }
+            }
+        }
+    }
+}
+srand(time(NULL));
 
 for (int i=0; i<nb_mur; i++){
   alea = min + rand() % (max + 1 - min);
   for (int k = 0; k<nb_obj; k++){
     for(int j = 0; j<nb_obj; j++){
-      /*
-      // Chargement d'un maillage a partir d'un fichier
-      mesh m = load_obj_file("data/cube.obj");
-
-      // Affecte une transformation sur les sommets du maillage
-      float s = 0.2f;
-      mat4 transform = mat4(   s, 0.0f, 0.0f, 0.0f,
-          0.0f,    s, 0.0f, 0.0f,
-          0.0f, 0.0f,   s , 0.0f,
-          0.0f, 0.0f, 0.0f, 1.0f);
-      apply_deformation(&m,transform);
-    
-      // Centre la rotation du modele 1 autour de son centre de gravite approximatif
-      obj[k][j][i].tr.rotation_center = vec3(0.0f,0.0f,0.0f);
-
-      update_normals(&m);
-      fill_color(&m,vec3(1.0f,1.0f,1.0f));
-
-      obj[k][j][i].vao = upload_mesh_to_gpu(m);
-
-      obj[k][j][i].visible = true;
-
-      obj[k][j][i].nb_triangle = m.connectivity.size();
       
-    
-      obj[k][j][i].texture_id = glhelper::load_texture("data/grass.tga");CHECK_GL_ERROR();*/
-
-
-    
       if(i==0){
         if (matrice[alea][k][j]) {
             
@@ -693,7 +604,7 @@ for (int i=0; i<nb_mur; i++){
           
             obj[k][j][i].texture_id = glhelper::load_texture("data/container.tga");CHECK_GL_ERROR();
             obj[k][j][i].prog = shader_program_id;
-            obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10-i*7); //avant le z était en -10
+            obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10-i*7);
 
         }
       }
@@ -726,7 +637,7 @@ for (int i=0; i<nb_mur; i++){
           
             obj[k][j][i].texture_id = glhelper::load_texture("data/container.tga");CHECK_GL_ERROR();
             obj[k][j][i].prog = shader_program_id;
-            obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10-i*7); //avant le z était en -10
+            obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10-i*7); 
 
         }
       }
@@ -758,7 +669,7 @@ for (int i=0; i<nb_mur; i++){
           
             obj[k][j][i].texture_id = glhelper::load_texture("data/container.tga");CHECK_GL_ERROR();
             obj[k][j][i].prog = shader_program_id;
-            obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10-i*7); //avant le z était en -10
+            obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10-i*7);
 
         }
       }
@@ -790,7 +701,7 @@ for (int i=0; i<nb_mur; i++){
           
             obj[k][j][i].texture_id = glhelper::load_texture("data/container.tga");CHECK_GL_ERROR();
             obj[k][j][i].prog = shader_program_id;
-            obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10-i*7); //avant le z était en -10
+            obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10-i*7); 
 
         }
       }
@@ -822,23 +733,11 @@ for (int i=0; i<nb_mur; i++){
           
             obj[k][j][i].texture_id = glhelper::load_texture("data/container.tga");CHECK_GL_ERROR();
             obj[k][j][i].prog = shader_program_id;
-            obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10-i*7); //avant le z était en -10
+            obj[k][j][i].tr.translation = vec3(0.0 +0.4*j, 0.0+0.4*k, -10-i*7); 
 
         }
       }
-       
-    /*
-      if (!matrice[alea][k][j]) {
-        obj[k][j][alea].visible = false;
-      }
-    
-    
-      if (!matrice[alea][k][j]) {
-        obj[k][j][alea].visible = false;
-      }*/
-    
-
-
+        
 
 
     }
@@ -909,37 +808,3 @@ void init_model_5()
 
   obj2[3].tr.translation = vec3(1.8f , 1.4f, -5.0);
 }
-/*
-
-void init_model_6()
-{
-    mesh m = load_obj_file("data/cube.obj");
-
-  // Affecte une transformation sur les sommets du maillage
-
-  float s = 30.0f;
-  float s2 = 0.002f;
-  float s3 = 100.0f;
-  mat4 transform = mat4(   s, 0.0f, 0.0f, 0.0f,
-      0.0f,    s2, 0.0f, 0.0f,
-      0.0f, 0.0f,   s3 , 0.0f,
-      0.0f, 0.0f, 0.0f, 1.0f);
-  apply_deformation(&m,transform);
-
-   update_normals(&m);
-  fill_color(&m,vec3(1.0f,1.0f,1.0f));
-
-  // Centre la rotation du modele 1 autour de son centre de gravite approximatif
-  obj2[4].tr.rotation_center = vec3(0.2f,-0.4f,0.0f);
-
-  //fill_color(&m,vec3(0.5f,0.0f,1.0f));
-
-  obj2[4].vao = upload_mesh_to_gpu(m);
-
-  obj2[4].nb_triangle = m.connectivity.size();
-  obj2[4].texture_id = glhelper::load_texture("data/route.tga");CHECK_GL_ERROR();
-  obj2[4].visible = true;
-  obj2[4].prog = shader_program_id;
-
-  obj2[4].tr.translation = obj2[1].tr.translation + vec3(0.0f,-0.6f,0.0f);
-}*/
